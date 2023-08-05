@@ -1,0 +1,7 @@
+[Unit]
+Requires=update_genre_descriptions.service
+[Timer]
+Unit=update_genre_descriptions.service
+OnCalendar=*-*-* 03:00
+[Install]
+WantedBy=timers.target

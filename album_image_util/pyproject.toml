@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "album-image-util"
+version = "0.1.0"
+description = "Utility for creating album of the day images"
+authors = ["William04A <35110380+William04A@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "album_image_util"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pillow = "^10.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

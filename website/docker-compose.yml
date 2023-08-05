@@ -1,0 +1,17 @@
+services:
+  #The frontend is a static server that runs using yarn and Svelte's
+  #built production Node server.
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Frontend.Dockerfile
+    ports:
+      - "80:3000"
+  #The backend runs using uvicorn and Django, with Whitenoise as the
+  #middleware to handle static sites.
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Backend.Dockerfile
+    ports:
+      - "80:8080"

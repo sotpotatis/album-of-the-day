@@ -1,0 +1,8 @@
+[Unit]
+Description=Updates album covers from Last.FM.
+Requires=update_album_covers.timer
+[Service]
+ExecStart=/usr/bin/task_runner update_daily_rotations
+Type=oneshot
+[Install]
+RequiredBy=multi-user.target

@@ -1,0 +1,7 @@
+[Unit]
+Description=Creates a daily rotation for the current day on the album of the day website
+Requires=update_daily_rotations.timer
+[Service]
+ExecStart=/usr/bin/task_runner update_daily_rotations
+[Install]
+RequiredBy=multi-user.target

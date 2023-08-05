@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Album of the day</title>
+    <!-- Responsive viewport -->
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Load CSS -->
+    <link rel="stylesheet" href="/static/index.css"/>
+    <!-- Iconify -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</head>
+<body>
+<h1>Album of the day backend</h1>
+<p>Hej! Denna hemsida innehåller ett <i>API</i> för min hemsida <a href="https://album-of-the-day.albins.website" target="_blank">Album of the day</a>.</p>
+<button class="button-blue" onclick="location.href = 'https://album-of-the-day.albins.website'"><iconify-icon icon="majesticons:open-line"></iconify-icon> Till album of the day</button>
+<h2>Utvecklare? Se hit!</h2>
+<p>Du kan använda denna hemsidas <i>API</i> för att inhämta kommentarer om album, information om listor etc. etc.</p>
+<p>Ett API-schema finns här:</p>
+<button class="button-green" onclick="location.href = '/api/schema'"><iconify-icon icon="basil:document-outline"></iconify-icon> Spec</button>
+<h3>Viktigt</h3>
+<ul>
+    <li>Om du använder exempelvis kommentarer från mig, <i>måste du hänvisa till mig</i>. Allt innehåll som jag skrivit är licenserat under
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC-BY-NC 4.0</a></li>
+    <li>En hel del innehåll i API:et från externa källor, till exempel genrebeskrivningar som i skrivande stund är tillhandahållet
+    via <a href="https://last.fm">Last.FM</a>. Ett annat exempel är albumomslag som tillhandahålls via <a href="https://spotify.com">Spotify</a>.
+    Var vänlig hämta inte denna externa data via API:et, utan använd istället dessa plattformars
+    respektive API och respektera respektive plattforms regler kring användning.</li>
+</ul>
+</body>
+</html>

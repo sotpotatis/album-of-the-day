@@ -1,0 +1,9 @@
+album_images
+processed_album_images
+tests
+albums.json
+ArchivoBlack-Regular.ttf
+spellcheck
+.env
+__pycache__
+.idea

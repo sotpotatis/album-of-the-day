@@ -1,0 +1,8 @@
+[Unit]
+Description=Updates genre descriptions from online sources using the task runner.
+Requires=update_genre_descriptions.timer
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/task_runner update_genre_descriptions
+[Install]
+WantedBy=multi-user.target

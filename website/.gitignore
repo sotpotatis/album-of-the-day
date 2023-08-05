@@ -1,0 +1,4 @@
+Spacefile
+deprecated/
+.database-storage
+docker-compose.yml.old

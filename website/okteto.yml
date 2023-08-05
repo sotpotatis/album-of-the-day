@@ -1,0 +1,79 @@
+name: website
+
+# The build section defines how to build the images of your development environment
+# More info: https://www.okteto.com/docs/reference/manifest/#build
+build:
+
+  # You can use the following env vars to refer to this image in your deploy commands:
+  #  - OKTETO_BUILD_BACKEND_REGISTRY: image registry
+  #  - OKTETO_BUILD_BACKEND_REPOSITORY: image repo
+  #  - OKTETO_BUILD_BACKEND_IMAGE: image name
+  #  - OKTETO_BUILD_BACKEND_SHA: image tag sha256
+  backend:
+    context: backend
+    dockerfile: Backend.Dockerfile
+
+  # You can use the following env vars to refer to this image in your deploy commands:
+  #  - OKTETO_BUILD_DATABASE_REGISTRY: image registry
+  #  - OKTETO_BUILD_DATABASE_REPOSITORY: image repo
+  #  - OKTETO_BUILD_DATABASE_IMAGE: image name
+  #  - OKTETO_BUILD_DATABASE_SHA: image tag sha256
+  database:
+    context: database
+    dockerfile: Database.Dockerfile
+
+  # You can use the following env vars to refer to this image in your deploy commands:
+  #  - OKTETO_BUILD_FRONTEND_REGISTRY: image registry
+  #  - OKTETO_BUILD_FRONTEND_REPOSITORY: image repo
+  #  - OKTETO_BUILD_FRONTEND_IMAGE: image name
+  #  - OKTETO_BUILD_FRONTEND_SHA: image tag sha256
+  frontend:
+    context: frontend
+    dockerfile: Frontend.Dockerfile
+
+# The deploy section defines how to deploy your development environment
+# More info: https://www.okteto.com/docs/reference/manifest/#deploy
+deploy:
+  compose:
+    file: docker-compose.yml
+
+# The dependencies section defines other git repositories to be deployed as part of your development environment
+# More info: https://www.okteto.com/docs/reference/manifest/#dependencies
+# dependencies:
+#   - https://github.com/okteto/sample
+
+
+# The dev section defines how to activate a development container
+# More info: https://www.okteto.com/docs/reference/manifest/#dev
+dev:
+  backend:
+    command: bash
+    workdir: /app
+    sync:
+      - backend:/app
+    forward:
+      - 8080:8080
+      - 8081:8080
+    reverse:
+      - 9000:9000
+    volumes:
+      - /root/.cache/pip
+  database:
+    command: sh
+    sync:
+      - .database-storage:/var/lib/postgresql/data
+    forward:
+      - 5432:5432
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_PASSWORD=sjkajdklsjsOÖAWIJQIOPEU28UJDSLÖKAJDKAS123
+      - POSTGRES_USER=postgres
+  frontend:
+    command: bash
+    workdir: /usr/share/nginx.html
+    sync:
+      - frontend:/usr/share/nginx.html
+    forward:
+      - 9229:9229
+      - 8080:80
+

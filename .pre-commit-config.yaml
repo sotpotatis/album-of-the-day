@@ -1,0 +1,25 @@
+repos:
+  # Include the Black code formatter for Python files
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+      - id: black
+        language_version: python3.9
+        files: website/backend/(.*).py
+  # And use the Prettier formatter for everything else
+  # I didn't get it to work, so we'll do it locally!
+  - repo: local
+    hooks:
+      - id: format-prettier
+        name: format-prettier
+        entry: python prettier_format.py
+        language: python
+        pass_filenames: false
+  # Also add this tool to detect secrets
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ["--disable-plugin", "Base64HighEntropyString"] #Base64 stuff are to be expected
+        exclude: ^faviconDescription.json
+

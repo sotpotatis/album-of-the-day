@@ -1,0 +1,7 @@
+[Unit]
+Requires=update_daily_rotations.service
+[Timer]
+Unit=update_daily_rotations.service
+OnCalendar=*-*-* 23:55:00
+[Install]
+WantedBy=timers.target

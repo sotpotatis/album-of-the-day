@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "spotify-api-client"
+version = "0.1.0"
+description = ""
+authors = ["William04A <35110380+William04A@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "spotify_api_client"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "^2.31.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

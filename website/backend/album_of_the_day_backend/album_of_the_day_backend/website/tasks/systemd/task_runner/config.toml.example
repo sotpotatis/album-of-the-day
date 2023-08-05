@@ -1,0 +1,27 @@
+#config.toml
+#Task runner configuration!
+[basics]
+#tasks_dir: Where task files are located.
+tasks_dir = "../.."
+[health]
+enabled = false #Whether to send health pings or not
+engine="healthchecks" #What to use to report health
+[healthchecks] #Healthchecks-specific settings
+#Add these for every script.
+#[healthchecks.update_genre_descriptions]
+#uuid=""
+#[healthchecks.update_daily_rotations]
+#uuid=""
+[tasks]
+#Sets up timings for when to run each task. Can be used with the
+#task_runner_infinite.py script to automatically schedule and run tasks,
+#one at a time.
+[tasks.timings]
+[tasks.timings.update_album_covers]
+crontab="*/30 * * * *" # Runs every 30 minutes
+[tasks.timings.update_daily_rotations]
+crontab="59 23 * * *" # Runs every day at 23:55
+[tasks.timings.update_genre_descriptions]
+crontab="15-59/30 * * * *" # Runs every 30 minutes (offset runs at :45)
+[tasks.timings.update_spotify_uids]
+crontab="59-59/30 * * * *" # Runs every 30 minutes (offset, runs at :59)

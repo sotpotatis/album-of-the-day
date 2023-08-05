@@ -1,0 +1,30 @@
+/* index.css
+CSS rules for index.html. */
+@import url('https://fonts.googleapis.com/css2=family=Inter:wght@400;500;600;700&display=swap');
+body {
+    padding: 2em;
+    font-family: "Inter", sans-serif;
+}
+button {
+    font-weight: bold;
+    font-size: 0.8em;
+    padding: 1em;
+    border: 0.1em solid white;
+    box-shadow: none;
+    border-radius: 0.5em;
+}
+button:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+.button-blue {
+    background: #3556b0;
+    color: white
+}
+.button-green {
+    background: #3bb035;
+    color: white;
+}
+li {
+    padding-bottom: 0.5em;
+}

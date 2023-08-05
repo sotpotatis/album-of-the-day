@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <!-- index.html
+    Preview page for OCR-extracted albums.
+    Shows a preview of all albums in the album file
+    (which contains OCR-extracted metadata) -->
+    <meta charset="UTF-8" />
+    <title>Förhandsgranskning av OCR-album</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Open Sans&display=swap");
+      body {
+        font-family: "Open Sans", sans-serif;
+      }
+      hr {
+        border-bottom: 1vh solid dodgerblue;
+        padding-bottom: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    {% for album in data %}
+    <h1>{{ album.title }}</h1>
+    <h2>Genrer</h2>
+    <p>{% for genre in album.genres %} {{ genre }} {% endfor %}</p>
+    <h2>Kommentarer</h2>
+    <p>
+      {% for word in album.comment_words%} {% if word.highlighted %}<b
+        >{% endif %}{{ word.word }}{% if word.highlighted %}</b
+      >{% endif %} {% endfor %}
+    </p>
+    <hr />
+    {% endfor %}
+  </body>
+</html>

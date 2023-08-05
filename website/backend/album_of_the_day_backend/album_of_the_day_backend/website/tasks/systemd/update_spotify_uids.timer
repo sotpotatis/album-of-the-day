@@ -1,0 +1,7 @@
+[Unit]
+Requires=update_spotify_uids.service
+[Timer]
+Unit=update_spotify_uids
+OnCalendar=*-*-* 03:15
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,8 @@
+[Unit]
+Description=Updates Spotify UIDs.
+Requires=update_spotify_uids.timer
+[Service]
+ExecStart=/usr/bin/task_runner update_spotify_uids
+Type=oneshot
+[Install]
+RequiredBy=multi-user.target

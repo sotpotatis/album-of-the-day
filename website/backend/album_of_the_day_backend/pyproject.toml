@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "album-of-the-day-backend"
+version = "0.1.0"
+description = ""
+authors = ["William04A <35110380+William04A@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "album_of_the_day_backend"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+django = "^4.2.1"
+djangorestframework = "^3.14.0"
+django-filter = "^23.2"
+markdown = "^3.4.3"
+cx-oracle = "^8.3.0"
+huey = "^2.4.5"
+last-fm-api-client = "^0.2.5"
+python-dateutil = "^2.8.2"
+beautifulsoup4 = "^4.12.2"
+requests = "^2.31.0"
+toml = "^0.10.2"
+python-dotenv = "^1.0.0"
+django-cors-headers = "^4.1.0"
+drf-url-filters = "^0.5.1"
+django-rest-swagger = "^2.2.0"
+pyyaml = "^6.0.1"
+discord-py = "^2.3.1"
+aiohttp = "^3.8.5"
+pillow = "^10.0.0"
+cron-converter = "^1.0.2"
+album-image-util = "^0.1.0"
+spotify-api-client = "^0.1.0"
+uvicorn = "^0.23.2"
+whitenoise = "^6.5.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
