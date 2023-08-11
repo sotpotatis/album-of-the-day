@@ -2,7 +2,7 @@
 Creates an API client for use with the Album of the day backend. */
 export const BASE_URL = import.meta.env.DEV
 	? 'http://localhost:8000'
-	: 'https://album-of-the-day-api.albins.website';
+	: 'https://backend-sotpotatis.cloud.okteto.net';
 /**
  * Sends a request to the Album of the day backend API.
  * @param path The API path to request.
