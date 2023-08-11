@@ -1,5 +1,5 @@
-import { adapter as nodeAdapter } from '@sveltejs/adapter-node';
-import { adapter as netlifyAdapter } from '@sveltejs/adapter-netlify';
+import nodeAdapter from '@sveltejs/adapter-node';
+import netlifyAdapter from '@sveltejs/adapter-netlify';
 
 import { vitePreprocess } from '@sveltejs/kit/vite';
 // NOTE: The application supports multiple compatible kits based on environment variables:
