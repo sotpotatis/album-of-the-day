@@ -16,7 +16,7 @@ A heading divider is a subheading on a page with a horizontal ruler underneath i
 >
 	{title}
 	<slot name="heading" />
-	{#if collapsible}
+	{#if collapsible && !skeleton}
 		<button
 			on:click={() => {
 				collapsed = !collapsed;

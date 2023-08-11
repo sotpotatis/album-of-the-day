@@ -60,6 +60,9 @@ ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ["*"]
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    "DJANGO_CSRF_ORIGINS", "http://localhost,http://127.0.0.1"
+).split(",")
 # Application definition
 
 INSTALLED_APPS = [
