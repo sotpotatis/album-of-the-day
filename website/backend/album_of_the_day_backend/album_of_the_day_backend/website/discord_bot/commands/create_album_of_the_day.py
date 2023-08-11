@@ -65,6 +65,7 @@ class AddNewAlbumModal(Modal, title="Lägg till nytt album"):
         self,
         is_album_of_the_day: Optional[bool] = None,
         on_done: Optional[typing.Callable] = None,
+        image_font: Optional[Union[BytesIO, str]] = None,
     ):
         """Creates an AddNewAlbumModal.
         This modal can either be used to create an album of the day, or a new album.
@@ -74,12 +75,16 @@ class AddNewAlbumModal(Modal, title="Lägg till nytt album"):
 
         :param on_done: An optional function to run when the modal is done doing whatever it is doing.
         Will receive the model that has been created - whether it is to create a new album or create a new album of the day.
+
+        :param image_font: A path or bytes object that accesses the current image font. NOTE that this value is not optional
+        if is_album_of_the_day is True!
         """
         # Fill out defaults
         if is_album_of_the_day is None:
             is_album_of_the_day = True
         super().__init__()
         self.is_album_of_the_day = is_album_of_the_day
+        self.image_font = image_font
         # Remove comments if the item is not album of the day
         if not self.is_album_of_the_day:
             self.remove_item(self.album_comments)
@@ -676,7 +681,7 @@ class AddNewAlbumModal(Modal, title="Lägg till nytt album"):
                             artist_name=album_artist_names,
                             genre_names=album_genre_names,
                             comments=album_of_the_day.comments,
-                            font_path=IMAGE_FONT_PATH,
+                            font_path=self.parent_view.image_font,
                             album_cover=album_cover_image,
                         )
                         logger.info(
@@ -902,6 +907,11 @@ class AddNewAlbumModal(Modal, title="Lägg till nytt album"):
 
 
 # Define main class
+ARCHIVO_BLACK_URL = (
+    "https://www.dafontfree.net/data/16/a/77773/ArchivoBlack-Regular.ttf"
+)
+
+
 class CreateAlbumOfTheDay(Cog):
     """Bot cog that includes commands for creating a new album of the day."""
 
@@ -909,18 +919,38 @@ class CreateAlbumOfTheDay(Cog):
         """Initializes the cog to create album of the days."""
         self.bot = bot
         self.logger = logging.getLogger(__name__)
+        self.image_font = None  # Font used for creation of album images
+
+    async def download_font(self) -> None:
+        """To create new album of the day images, we need a font.
+        For easier running in a containerized environment, the font is downloaded here and stored
+        in memory."""
+        self.logger.info("Bot is ready. Downloading Archivo Black...")
+        async with aiohttp.ClientSession() as session:
+            async with session.get(ARCHIVO_BLACK_URL) as request:
+                if request.status == 200:
+                    self.logger.info("Image font downloaded.")
+                    self.image_font = BytesIO(await request.read())
+                else:
+                    raise OSError(
+                        f"Unexpected status code when downloading image font: {request.status}."
+                    )
 
     @command(description="Adds a new album of the day to the database.")
-    async def add_album_of_the_day(self, interaction: Interaction):
+    async def add_album_of_the_day(self, interaction: Interaction) -> None:
         """Adds a new album of the day to the database."""
         self.logger.info(
             "Got a request to add a new album of the day! Sending out information modal..."
         )
-        await interaction.response.send_modal(AddNewAlbumModal())
+        await interaction.response.send_modal(
+            AddNewAlbumModal(image_font=self.image_font)
+        )
 
 
 async def setup(bot: Bot):
     """Setup function that is called when the bot loads this extension.
 
     :param bot: The Discord bot instance."""
-    await bot.add_cog(CreateAlbumOfTheDay(bot))
+    cog = CreateAlbumOfTheDay(bot)
+    await cog.download_font()
+    await bot.add_cog(cog)

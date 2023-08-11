@@ -1,7 +1,7 @@
 /* apiClient.js
 Creates an API client for use with the Album of the day backend. */
 export const BASE_URL = import.meta.env.DEV
-	? ' https://5af1-217-213-76-20.ngrok-free.app' // 'http://localhost:8000'
+	? 'http://localhost:8000'
 	: 'https://album-of-the-day-api.albins.website';
 /**
  * Sends a request to the Album of the day backend API.
@@ -46,6 +46,9 @@ export async function sendRequest(
 	if (paginationFunction !== null && queryArguments.page === undefined) {
 		queryArguments.page = 1;
 	}
+	if (paginationFunction !== null && paginationLimit !== null && paginationLimit !== undefined) {
+		queryArguments.limit = paginationLimit;
+	}
 	const searchParams =
 		Object.keys(queryArguments).length > 0 ? `?${new URLSearchParams(queryArguments)}` : '';
 	const rawRequestURL = `${BASE_URL}${path}`; // Request URL without search parameters
@@ -59,7 +62,9 @@ export async function sendRequest(
 		if (response.status.toString().startsWith('2')) {
 			// Check for pagination
 			if (responseJSON.next !== undefined && responseJSON.next !== null) {
-				console.debug(`Applying pagination to request ${requestURL}...`);
+				console.debug(
+					`Applying pagination to request ${requestURL} (limit: ${paginationLimit})...`
+				);
 				// For pagination, the caller defines a function that returns us a list. This function will help us create a
 				// list of data
 				let responseData = paginationFunction(responseJSON, previousEntries);
@@ -70,8 +75,7 @@ export async function sendRequest(
 				}
 				// Resend the request as long as there is no limit blocking it
 				if (
-					paginationLimit === null ||
-					paginationLimit === undefined ||
+					(paginationLimit === null || paginationLimit === undefined) &&
 					paginationLimit < previousEntries.length
 				) {
 					queryArguments.page += 1;
@@ -96,12 +100,15 @@ export async function sendRequest(
 					previousEntries = paginatedData;
 				}
 				// And the list should have the correct length!
+				console.log(paginationLimit);
+				console.log(previousEntries.length > paginationLimit);
 				if (
 					paginationLimit !== null &&
 					paginationLimit !== undefined &&
 					previousEntries.length > paginationLimit
 				) {
-					previousEntries = previousEntries.slice(0, paginationLimit - 1);
+					console.log('Here');
+					previousEntries = previousEntries.slice(0, paginationLimit);
 				}
 			}
 			const dataToReturn = previousEntries === undefined ? responseJSON : previousEntries;

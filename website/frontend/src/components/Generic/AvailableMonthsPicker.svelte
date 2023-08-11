@@ -63,10 +63,13 @@ as well as a picker to pick the month. -->
         "2023": [available_months],
         "2022": [available_months]
         ...
-    }
+    }.
+    It is sorted from the server, but I figured that it also must be sorted here somehow.
     -->
-	{#each Object.entries(responseData) as [availableYear, availableMonths]}
-		{#each availableMonths as availableMonth}
+	{#each Object.keys(responseData).sort((key) => key) as availableYear}
+		{#each responseData[availableYear].sort((key) => key) as availableMonth}
+			<!-- No idea why this makes the list sorted, but it does.. -->
+			<p>{availableYear}-{availableMonth}</p>
 			<option
 				value={`${availableYear}-${availableMonth}`}
 				data-year={availableYear}

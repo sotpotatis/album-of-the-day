@@ -4,14 +4,30 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Frontend.Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "80:3000"
+    labels:
+      #Used for adding a custom domain to Okteto, per their documentation: https://www.okteto.com/docs/1.7/cloud/custom-domains/
+      #dev.okteto.com/auto-ingress: domain
+       #dev.okteto.com/custom-domain: true
+       #dev.okteto.com/domain: album-of-the-day.albins.website
+       #dev.okteto.com/auto-ingress: "true"
+       dev.okteto.com/generate-host: "true"
   #The backend runs using uvicorn and Django, with Whitenoise as the
   #middleware to handle static sites.
   backend:
+    env_file:
+      - ./backend/album_of_the_day_backend/backend.env
     build:
       context: ./backend
-      dockerfile: Backend.Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "80:8080"
+    labels:
+      #Used for adding a custom domain to Okteto, per their documentation: https://www.okteto.com/docs/1.7/cloud/custom-domains/
+      #dev.okteto.com/auto-ingress: domain
+      #dev.okteto.com/custom-domain: true
+      #dev.okteto.com/domain: album-of-the-day-api.albins.website
+      #dev.okteto.com/auto-ingress: "true"
+      dev.okteto.com/generate-host: "true"

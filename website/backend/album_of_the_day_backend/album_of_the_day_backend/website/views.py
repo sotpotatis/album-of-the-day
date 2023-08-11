@@ -16,7 +16,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from filters.mixins import FiltersMixin
 from rest_framework.filters import SearchFilter, OrderingFilter
 from typing import List, Dict, Optional, Type
-from django.db.models import Model
+from django.db.models import Model, Prefetch
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from spotify_api_client.client import (
@@ -120,10 +120,17 @@ def index(request):
 # The APIView is used for custom views.
 # FilterMixin together with the attribute filter_mappings
 # is added to some views for filtering via URL parameters
+def attrs_to_prefetches(attrs):
+    prefetches = []
+    for attr in attrs:
+        prefetches.append(Prefetch(attr, to_attr=f"{attr}_list"))
+    return prefetches
+
+
 class AlbumView(FiltersMixin, generics.ListCreateAPIView):
     """Lists all albums that are in the database."""
 
-    queryset = Album.objects.prefetch_related(*ALBUM_RELATED_FIELDS)
+    queryset = Album.objects.prefetch_related(*(ALBUM_RELATED_FIELDS))
     serializer_class = AlbumSerializer
     filter_backends = [SearchFilter, OrderingFilter]
     filterset_fields = ["artists", "genres"]
@@ -136,7 +143,7 @@ class AlbumView(FiltersMixin, generics.ListCreateAPIView):
 class IndividualAlbumView(generics.RetrieveUpdateDestroyAPIView):
     """Retrieves an individual album."""
 
-    queryset = Album.objects.prefetch_related(*ALBUM_RELATED_FIELDS)
+    queryset = Album.objects.prefetch_related(*(ALBUM_RELATED_FIELDS))
     serializer_class = AlbumSerializer
 
 
@@ -192,7 +199,7 @@ class AlbumOfTheDayView(FiltersMixin, generics.ListCreateAPIView):
 class IndividualAlbumOfTheDayView(generics.RetrieveUpdateDestroyAPIView):
     """Retrieves an individual album of the day."""
 
-    queryset = AlbumOfTheDay.objects.all()
+    queryset = AlbumOfTheDay.objects.prefetch_related(*ALBUM_OF_THE_DAY_RELATED_FIELDS)
     serializer_class = AlbumOfTheDaySerializer
 
 
@@ -281,6 +288,8 @@ class ItemAvailableMonthsView(views.APIView):
         requested_model = ITEMS_TO_MODEL[requested_item]
         requested_items = requested_model.objects.all()
         response_json: Dict[str, List[int]] = {}
+        response_json_ordered: OrderedDict[str, List[int]] = OrderedDict()
+        # Create the response JSON: unordered
         for item in requested_items:
             if requested_model == AlbumOfTheDay:
                 model_date = item.date
@@ -292,7 +301,13 @@ class ItemAvailableMonthsView(views.APIView):
                 response_json[model_year] = []
             if model_month not in response_json[model_year]:
                 response_json[model_year].append(model_month)
-        return Response(response_json)
+        # Order the response JSON
+        year_order = list(response_json.keys())
+        year_order.sort(key=lambda year: int(year), reverse=True)
+        for year in year_order:
+            response_json_ordered[year] = response_json[year]
+            response_json_ordered[year].sort(reverse=True)
+        return Response(response_json_ordered)
 
 
 # Custom views created for "save to Spotify"

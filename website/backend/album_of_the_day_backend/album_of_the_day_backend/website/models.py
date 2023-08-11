@@ -136,7 +136,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
     def get_album_count(self, instance):
         """Custom field that returns the number of albums in the genre."""
-        return len(Album.objects.filter(genres__in=[instance]).all())
+        return Album.objects.filter(genres__in=[instance]).count()
 
     class Meta:
         model = Genre

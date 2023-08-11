@@ -8,7 +8,8 @@ Anyways, here are some installation instructions:
 
 1. Set up a database on Oracle Cloud or using Oracle Database (otherwise you'll have to tweak the code a little bit)
 2. Set your environment variables - here is a complete list:
-   
+   > **Note**: If you're using `docker-compose`, you have to put these variables in the file `backend.env`.
+   > For a local deployment, you can store them in a file called `.env`. 
    * `DJANGO_SECRET_KEY`: Django secret key. Set this to something unique and secret!
    * `DJANGO_DEBUG`: Set to `True` if you need the debug server, otherwise you can leave this unset because `False` is the default.
    * `DATABASE_USER`: Name of the database user.
@@ -32,12 +33,24 @@ Anyways, here are some installation instructions:
 **Some environmental variable notes for Oracle Cloud**
 * Set these variables to custom paths if needed:
 `ORACLE_DATABASE_CLIENT_PATH`="C:\\oracle\\instantclient_21_10" (on Windows, for example).
-`ORACLE_DATABASE_WALLET_PATH`="<root-path>.wallet"
-You might have to change the wallet path according to [this](https://blogs.oracle.com/opal/post/connecting-to-oracle-cloud-autonomous-database-with-django#connect) guide (see "Download and Setup the Oracle Database wallet files")
+`ORACLE_DATABASE_WALLET_PATH`="<root-path>/.wallet"
+
+* **Editing paths for connecting to Oracle Cloud**
+
+* You probably also need to modify the `sqlnet.ora` file, specifically this line:
+```
+WALLET_LOCATION = (SOURCE = (METHOD = file) (METHOD_DATA = (DIRECTORY="[...]")))
+```
+so that the `DIRECTORY=` part matches the directory where your wallet files are put.
+See [this](https://blogs.oracle.com/opal/post/connecting-to-oracle-cloud-autonomous-database-with-django#connect) 
+guide (see "Download and Setup the Oracle Database wallet files").
+If you're using the production docker containers in production, also see [this](https://www.talkapex.com/2021/01/connecting-to-oracle-cloud-database-ora-28759-failure-to-open-file/) note.
 * Set the `DATABASE_USER` to `ADMIN`
 * Set `DATABASE_PASSWORD` to the admin user password (from Oracle Cloud).
 * Set `DATABASE_NAME` to the `DSN` (connection string, the *syntax* looks like this: `(description= (retry_count=20)()...`
 * Set `DATABASE_HOST` *and* `DATABASE_PORT` to an *empty* string (important step!)
+
+
 _____
 3. Install the requirements - `cd album_of_the_day_backend && poetry install`
 4. You should now be able to run the server!

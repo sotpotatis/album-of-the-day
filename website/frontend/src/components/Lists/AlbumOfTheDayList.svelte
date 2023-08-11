@@ -16,11 +16,9 @@ A list of album of the days for the home page. -->
 	export let limit = 5; // Allows specifying a limit of albums to display
 	let [success, responseData] = [null, null]; // success == null means that we are loading
 	onMount(() => {
-		getAlbumOfTheDays((limit = limit), (startDate = startDate), (endDate = endDate)).then(
-			(result) => {
-				[success, responseData] = result;
-			}
-		);
+		getAlbumOfTheDays(limit, startDate, endDate).then((result) => {
+			[success, responseData] = result;
+		});
 	});
 	// Fill out dummy data when loading
 	if (success === null) {

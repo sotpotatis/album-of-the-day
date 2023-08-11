@@ -32,9 +32,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATABASE_ENGINE = os.environ.get("DATABASE_ENGINE", "django.db.backends.postgresql")
 DATABASE_OPTIONS = {}
 if DATABASE_ENGINE == "django.db.backends.oracle":
+    ORACLE_DATABASE_CONFIG_DIR = os.environ.get(
+        "ORACLE_DATABASE_WALLET_PATH", os.path.join(os.getcwd(), ".wallet")
+    )
+    if not os.path.exists(ORACLE_DATABASE_CONFIG_DIR):
+        raise FileNotFoundError(
+            f"""The wallet file path {ORACLE_DATABASE_CONFIG_DIR} does not exist. 
+        It must exist to make the database connection possible."""
+        )
     cx_Oracle.init_oracle_client(
-        lib_dir=os.environ["ORACLE_DATABASE_CLIENT_PATH"],
-        config_dir=os.environ["ORACLE_DATABASE_WALLET_PATH"],
+        lib_dir=os.environ.get("ORACLE_DATABASE_CLIENT_PATH", None),
+        config_dir=ORACLE_DATABASE_CONFIG_DIR,
     )
 
 # Quick-start development settings - unsuitable for production
@@ -45,6 +53,8 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DJANGO_DEBUG", False))
+if DEBUG:
+    logger.warning("Debug mode is active - do not use in production!")
 
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
@@ -132,14 +142,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+if DEBUG:
+    LOGGING = {
+        "version": 1,
+        "django.db": {  # Log database queries if running in debug
+            "level": "DEBUG",
+            "handlers": ["console"],
+        },
+    }
 # Django-REST configuration
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly"
     ],
     # Note: default filtering backends are set individually on each view, see views.py.
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": int(os.environ.get("API_PAGE_SIZE", 25)),
+    "DEFAULT_PAGINATION_CLASS": "album_of_the_day.rest_framework_settings.PaginationSettings",
 }
 
 

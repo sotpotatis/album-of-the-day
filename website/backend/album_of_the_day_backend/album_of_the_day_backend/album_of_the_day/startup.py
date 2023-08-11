@@ -47,5 +47,6 @@ def run_startup_tasks():
     for task_to_run, name_of_task in TASKS_TO_RUN:
         logger.info(f"Starting a thread for {name_of_task}...")
         thread = Thread(target=task_to_run)
+        thread.daemon = True
         thread.start()
         logger.info(f"Thread for {name_of_task} was started.")
