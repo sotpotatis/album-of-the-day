@@ -139,7 +139,7 @@ using provided filters and then display it inside a heading with a little count 
 <div class={`${!inline ? ` bg-${backgroundColor} border-2 border-gray-400 rounded-lg` : ''}`}>
 	<HeadingDivider
 		title={titleToUse}
-		collapsible={true}
+		collapsible={!skeleton}
 		defaultCollapsed={success !== false ? defaultCollapsed : false}
 	>
 		<svelte:fragment slot="heading">
