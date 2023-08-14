@@ -1,7 +1,6 @@
 #deploy-to-okteto.yaml
 #Github Action that deploys the frontend and backend to Okteto.
 name: Deploy services to Okteto
-description: Deploys the frontend and backend services
 on: [push]
 jobs:
   deploy-to-okteto:
