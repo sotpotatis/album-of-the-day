@@ -41,6 +41,7 @@ if len(TASK_TIMINGS) > 0:
                     # Run the task inside a thread
                     logger.info(f"Running the task {task_name}...")
                     task_thread = Thread(target=run, kwargs={"task_name": task_name})
+                    task_thread.start()
                     logger.info(f"Thread for {task_name} was started.")
                 upcoming_runs[task_name] = next_run
                 logger.info(f"Queued: {task_name} is queued to run on {next_run}.")

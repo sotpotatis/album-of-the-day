@@ -113,9 +113,9 @@ using provided filters and then display it inside a heading with a little count 
 	const DEFAULT_RESULT_VALUE = [null, TYPE_TO_DUMMY_DATA[searchType]]; // success = null to show skeleton loader, and some dummy data
 	let [success, responseData] = DEFAULT_RESULT_VALUE;
 	let cachedResults = {};
-	$: searchKey = `${JSON.stringify(searchFilters)}-${searchLimit}`; // Create a unique key for the search so we can cache it.
+	$: searchKey = `${searchFilters !== null ? JSON.stringify(searchFilters) : ''}-${searchLimit}`; // Create a unique key for the search so we can cache it.
 	const search = () => {
-		if (!Object.keys(cachedResults).includes(searchKey)) {
+		if (!Object.keys(cachedResults).includes(searchKey) && searchFilters !== null) {
 			[success, responseData] = DEFAULT_RESULT_VALUE;
 			// Each of the TYPE_TO_API_FUNCTION functions has the following arguments and in the following order:
 			// limit, filters. Could be a bit cleaner to do this with kwargs but whatever.
@@ -131,7 +131,7 @@ using provided filters and then display it inside a heading with a little count 
 	};
 	onMount(search);
 	$: searchFilters, search();
-	$: skeleton = success !== true;
+	$: skeleton = success !== true || searchFilters === null; // searchFilters can be set to null to externally indicate skeleton loading
 	// Note: the slice below is to remove the plural form: genres -> genre, for example
 	$: searchTypeSingular = searchType.slice(0, -1);
 </script>
@@ -139,18 +139,18 @@ using provided filters and then display it inside a heading with a little count 
 <div class={`${!inline ? ` bg-${backgroundColor} border-2 border-gray-400 rounded-lg` : ''}`}>
 	<HeadingDivider
 		title={titleToUse}
-		collapsible={!skeleton}
+		collapsible={true}
 		defaultCollapsed={success !== false ? defaultCollapsed : false}
 	>
 		<svelte:fragment slot="heading">
 			<Badge
 				color={TYPE_TO_BADGE_COLOR[searchTypeSingular]}
-				text={responseData.length}
+				text={!skeleton ? responseData.length : '0'}
 				{skeleton}
 			/>
 		</svelte:fragment>
 		<svelte:fragment slot="collapsible">
-			{#if success !== false}
+			{#if success !== false && !skeleton}
 				<div
 					class={`${
 						!inline

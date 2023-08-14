@@ -17,28 +17,39 @@ Lists all the genres that are in the database.
 		null,
 		[DUMMY_GENRE_DATA, DUMMY_GENRE_DATA, DUMMY_GENRE_DATA, DUMMY_GENRE_DATA]
 	]; // success = null used to indicate loading, other is dummy data for skeleton loader
+	$: currentPage = 1;
+	$: totalEntries = null;
+	$: loadedEntries = null;
 	onMount(() => {
 		// Get genres on mount
-		getGenres().then((result) => {
+		getGenres(null, null, (page, loaded, total) => {
+			currentPage = page;
+			loadedEntries = loaded;
+			totalEntries = total;
+		}).then((result) => {
 			[success, responseData] = result;
 		});
 	});
 	// Sort genres by name and create a dictionary with all genres for each letter
 	$: sortedGenres = success !== false ? groupItemsByName(responseData, 'name') : {};
 	$: skeleton = success !== true; // Whether to show skeleton loader or not
+	$: loading = success === null; // Whether genres are loading or not
 </script>
 
 <Page>
 	<div slot="header">
 		<HeaderTitle
 			title="genrer"
-			description="en lista över alla genrer med album som jag har skrivit om."
+			description="en lista över alla genrer med album som jag har skrivit om. (denna sida kommer ta en halv evighet att ladda, då det är så pass många genrer!)"
 		/>
 	</div>
 	<svelte:fragment slot="page">
 		<HeadingDivider title="Genrer">
 			<svelte:fragment slot="heading">
 				<Badge text={responseData.length} color={GENRE_BADGE_COLOR} {skeleton} />
+				{#if loading && loadedEntries !== null}
+					<p class="text-base">Laddat {loadedEntries} genrer, {currentPage - 1} sidor</p>
+				{/if}
 			</svelte:fragment>
 		</HeadingDivider>
 		{#if success !== false}

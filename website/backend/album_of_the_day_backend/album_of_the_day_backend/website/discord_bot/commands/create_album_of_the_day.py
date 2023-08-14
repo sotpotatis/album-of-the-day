@@ -6,9 +6,10 @@ import tempfile
 from asyncio import as_completed
 from io import BytesIO, FileIO
 import aiohttp
+import requests
 from PIL import Image
 from discord.ext.commands import Bot, Cog
-from discord.app_commands import command
+from discord.app_commands import command, Choice
 from discord import Interaction, ButtonStyle, Button, Embed, File
 from discord.ui import View, Modal, TextInput, button, Select
 from .utilities import (
@@ -38,13 +39,107 @@ from website.tasks.util import (
     find_django_album_from_details,
     add_album_to_database,
 )
-from typing import Union, List, Type, Optional
+from typing import Union, List, Type, Optional, Dict
 from django.db.models import Model
 
 # Initialize logging
 logger = logging.getLogger(__name__)
 # Get the font path for album images.
 IMAGE_FONT_PATH = os.environ["ALBUM_IMAGES_FONT_PATH"]
+
+# Define a shared function for creating album of the day images
+CREATING_ALBUM_OF_THE_DAY_IMAGE_LOADING_MESSAGE = generate_loading_message(
+    title="Skapar bild...",
+    message="""Skapar en bild med dagens album som du kan publicera på till exempel en Snapchat-story...
+                            Detta kan ta upp till någon minut!""",
+)
+
+
+async def create_album_of_the_day_image(
+    font_path: Union[str, BytesIO],
+    album_of_the_day: Optional[AlbumOfTheDay] = None,
+    related_album: Optional[Album] = None,
+    genre_names: Optional[List[str]] = None,
+    artist_names: Optional[List[str]] = None,
+    album_name: Optional[str] = None,
+    comments: Optional[str] = None,
+    cover_url: Optional[str] = None,
+) -> List[Dict]:
+    """Creates album of the day images by generating them from scratch from given details. Also creates kwargs that can directly
+    be passed down to a Discord reply to send the messages to a server.
+
+    :param album_of_the_day: The album of the day to create an album of the day image from.
+
+    :param related_album: Data for the album that is related to the album of the day.
+
+    :param font_path: A path or bytes object to the font to use to generate the image.
+
+    :param genre_names: Optional parameter to pass genre names to use in the image. Otherwise, the code will download it from the album.
+
+    :param artist_names: Optional paramter to pass artist names to use in the image. Otherwise, the code will download it from the album.
+
+    :param album_name: Optionally pass the album name directly.
+
+    :param comments: Optionally pass the comments directly.
+
+    :param cover_url: Optionally pass the cover URL directly."""
+    album_cover_url = cover_url if cover_url is not None else related_album.cover_url
+    # Include album cover URL if available
+    if album_cover_url is not None and len(album_cover_url) > 0:
+        logger.info("Cover URL is available. Retrieving...")
+        async with aiohttp.ClientSession() as session:
+            async with session.get(related_album.cover_url) as response:
+                if response.status == 200:
+                    logger.info("Succeeded to retrieve cover URL! Reading data...")
+                    album_cover_image_data = await response.read()
+                    album_cover_image = Image.open(BytesIO(album_cover_image_data))
+                    logger.info("Album cover image retrieved.")
+                else:
+                    logger.warning(
+                        f"Failed to retrieve cover URL: status code {response.status}"
+                    )
+    else:
+        logger.info("No album cover URL is available. Using placeholder...")
+        album_cover_image = ALBUM_COVER_PLACEHOLDER_IMAGE_PILLOW
+    # Doownload artist and genres if needed
+    if artist_names is None:
+        logger.info("Downloading artist names for album...")
+        album_artists = await sync_to_async(get_all)(related_album.artists, True)
+        artist_names = []
+        for album_artist in album_artists:
+            artist_names.append(album_artist.name)
+        logger.info("Album artist names downloaded.")
+    if genre_names is None:
+        logger.info("Downloading artist names for album...")
+        album_genres = await sync_to_async(get_all)(related_album.genres, True)
+        genre_names = []
+        for album_genre in album_genres:
+            genre_names.append(album_genre.name)
+        logger.info("Album genre names downloaded.")
+    logger.info("Starting creation of album of the day images...")
+    album_of_the_day_images = create_image(
+        input_image=TEMPLATE_IMAGE_PILLOW,
+        album_name=related_album.name if album_name is None else album_name,
+        artist_name=artist_names,
+        genre_names=genre_names,
+        comments=comments if comments is not None else album_of_the_day.comments,
+        font_path=font_path,
+        album_cover=album_cover_image,
+    )
+    logger.info("Album of the day image(s) created. Returning generated kwargs...")
+    # We will return kwargs for every message that can be passed to message-sending related function (reply(), send() etc.)
+    # in Discord. Generate them below.
+    message_kwargs = []
+    for i in range(len(album_of_the_day_images)):
+        album_of_the_day_image = album_of_the_day_images[i]
+        # To get the data from the image, we save it into memory
+        album_of_the_day_image_bytes = BytesIO()
+        album_of_the_day_image.save(album_of_the_day_image_bytes, format="PNG")
+        album_of_the_day_image_bytes.seek(0)
+        message_kwargs.append(
+            {"file": File(album_of_the_day_image_bytes, f"album_of_the_day-{i}.png")}
+        )
+    return message_kwargs
 
 
 # Define different popups: to add a new album, to add a new list, etc.
@@ -627,11 +722,7 @@ class AddNewAlbumModal(Modal, title="Lägg till nytt album"):
                         self.parent_view.last_message = (
                             image_creating_loading_message
                         ) = await self.parent_view.last_message.reply(
-                            embed=generate_loading_message(
-                                title="Skapar bild...",
-                                message="""Skapar en bild med dagens album som du kan publicera på till exempel en Snapchat-story...
-                            Detta kan ta upp till någon minut!""",
-                            )
+                            embed=CREATING_ALBUM_OF_THE_DAY_IMAGE_LOADING_MESSAGE
                         )
                         # Finally, we have to include the album cover.
                         # This cover will be downloaded from online if it is available.
@@ -647,60 +738,17 @@ class AddNewAlbumModal(Modal, title="Lägg till nytt album"):
                         album_of_the_day_related_album = await sync_to_async(getattr)(
                             album_of_the_day, "album"
                         )
-                        if (
-                            album_of_the_day_related_album.cover_url is not None
-                            and len(album_of_the_day_related_album.cover_url) > 0
-                        ):
-                            logger.info("Cover URL is available. Retrieving...")
-                            async with aiohttp.ClientSession() as session:
-                                async with session.get(
-                                    album_of_the_day_related_album.cover_url
-                                ) as response:
-                                    if response.status == 200:
-                                        logger.info(
-                                            "Succeeded to retrieve cover URL! Reading data..."
-                                        )
-                                        album_cover_image_data = await response.read()
-                                        album_cover_image = Image.open(
-                                            BytesIO(album_cover_image_data)
-                                        )
-                                        logger.info("Album cover image retrieved.")
-                                    else:
-                                        logger.warning(
-                                            f"Failed to retrieve cover URL: status code {response.status}"
-                                        )
-                        else:
-                            logger.info(
-                                "No album cover URL is available. Using placeholder..."
-                            )
-                            album_cover_image = ALBUM_COVER_PLACEHOLDER_IMAGE_PILLOW
-                        logger.info("Starting creation of album of the day images...")
-                        album_of_the_day_images = create_image(
-                            input_image=TEMPLATE_IMAGE_PILLOW,
-                            album_name=album.name,
-                            artist_name=album_artist_names,
-                            genre_names=album_genre_names,
-                            comments=album_of_the_day.comments,
+                        message_kwargs = await create_album_of_the_day_image(
+                            album_of_the_day=album_of_the_day,
+                            related_album=album_of_the_day_related_album,
                             font_path=self.parent_view.image_font,
-                            album_cover=album_cover_image,
+                            genre_names=album_genre_names,
+                            artist_names=album_artist_names,
                         )
-                        logger.info(
-                            "Album of the day image(s) created. Sending them..."
-                        )
-                        for i in range(len(album_of_the_day_images)):
-                            album_of_the_day_image = album_of_the_day_images[i]
-                            # To get the data from the image, we save it into memory
-                            album_of_the_day_image_bytes = BytesIO()
-                            album_of_the_day_image.save(
-                                album_of_the_day_image_bytes, format="PNG"
-                            )
-                            album_of_the_day_image_bytes.seek(0)
+                        for message_kwargs in message_kwargs:
                             self.parent_view.last_message = (
                                 await self.parent_view.last_message.reply(
-                                    file=File(
-                                        album_of_the_day_image_bytes,
-                                        f"album_of_the_day-{i}.png",
-                                    )
+                                    **message_kwargs
                                 )
                             )
                         logger.info(
@@ -920,6 +968,38 @@ class CreateAlbumOfTheDay(Cog):
         self.bot = bot
         self.logger = logging.getLogger(__name__)
         self.image_font = None  # Font used for creation of album images
+        # Used for caching album of the days
+        self.album_of_the_days_last_downloaded_at = None
+        self.album_of_the_days_cache: List[
+            typing.Tuple[AlbumOfTheDay, Album, List[Artist]]
+        ] = []
+
+    async def sync_remote_album_of_the_days(self) -> None:
+        """Syncs the local album of the day cache with remote album of the days if needed."""
+        new_cache_items = []
+        if (
+            self.album_of_the_days_last_downloaded_at is None
+            or (get_now() - self.album_of_the_days_last_downloaded_at).total_seconds()
+            > 380
+        ):
+            self.logger.info("Syncing album of the days from database...")
+            album_of_the_days = await sync_to_async(get_all)(
+                AlbumOfTheDay,
+                False,
+                lambda: AlbumOfTheDay.objects.all().select_related("album"),
+            )
+            self.logger.info("Album of the days downloaded. Syncing related items...")
+            # Download all artists
+            for album_of_the_day in album_of_the_days:
+                # Get all related items
+                related_album = await sync_to_async(getattr)(album_of_the_day, "album")
+                all_album_artists = await sync_to_async(get_all)(
+                    related_album.artists, True
+                )
+                new_cache_items.append(
+                    (album_of_the_day, related_album, all_album_artists)
+                )
+            self.logger.info("Related items have been synced. Syncing complete.")
 
     async def download_font(self) -> None:
         """To create new album of the day images, we need a font.
@@ -930,11 +1010,37 @@ class CreateAlbumOfTheDay(Cog):
             async with session.get(ARCHIVO_BLACK_URL) as request:
                 if request.status == 200:
                     self.logger.info("Image font downloaded.")
-                    self.image_font = BytesIO(await request.read())
+                    # Save the response to a temporary file
+                    with open("archivo-black.ttf", "wb") as archivo_black_file:
+                        archivo_black_file.write(await request.read())
+                    self.image_font = "archivo-black.ttf"
                 else:
                     raise OSError(
                         f"Unexpected status code when downloading image font: {request.status}."
                     )
+
+    async def validate_album_of_the_day_index(
+        self, album_of_the_day_index: int, interaction: Interaction
+    ) -> bool:
+        """Validates that a user's picked album is correct.
+
+        :param album_of_the_day_index: The requested list index of the album of the day.
+
+        :param interaction: An interaction to send out an error message to directly in case the album
+        of the day is not valid.
+
+        :returns True if the validation succeeded, False if it failed."""
+        if (
+            album_of_the_day_index < 0
+            or album_of_the_day_index > len(self.album_of_the_days_cache) - 1
+        ):
+            await interaction.followup.send(
+                embed=generate_error_message(
+                    message="Felaktigt album of the day-index. Det album of the day du valde finns inte. Se till att du inte skrev in ett val manuellt."
+                )
+            )
+            return False
+        return True
 
     @command(description="Adds a new album of the day to the database.")
     async def add_album_of_the_day(self, interaction: Interaction) -> None:
@@ -946,6 +1052,136 @@ class CreateAlbumOfTheDay(Cog):
             AddNewAlbumModal(image_font=self.image_font)
         )
 
+    @command(description="Create an image for an album from the database.")
+    async def create_image_for_album(
+        self, interaction: Interaction, album_of_the_day: int
+    ):
+        """Creates an image for an album of the day. This image can for example be shared to a
+        Snapchat story.
+
+        :param interaction: the interaction that was invoked by the use of this slash command.
+
+        :param album_of_the_day: The index of the album of the day to get."""
+        self.logger.info("Got a request to create an image for an album of the day.")
+        await interaction.response.defer()
+        if await self.validate_album_of_the_day_index(album_of_the_day, interaction):
+            self.logger.info("Request aborted - invalid option.")
+            return
+        # Start grabbing the image details
+        album_of_the_day, related_album, related_artists = self.album_of_the_days_cache[
+            album_of_the_day
+        ]
+        # ...send out loading message
+        logger.info("Sending out loading message...")
+        last_message = loading_message = await interaction.response.send(
+            embed=CREATING_ALBUM_OF_THE_DAY_IMAGE_LOADING_MESSAGE
+        )
+        logger.info("Loading message sent.")
+        messages_kwargs = await create_album_of_the_day_image(
+            album_of_the_day=album_of_the_day,
+            related_album=related_album,
+            font_path=self.image_font,
+        )
+        for i in range(len(messages_kwargs)):
+            message_kwargs = messages_kwargs[i]
+            logger.info(f"Sending message {i+1}/{len(messages_kwargs)}...")
+            last_message = await last_message.reply(*message_kwargs)
+            logger.info(f"Message {i+1}/{len(messages_kwargs)} sent.")
+        self.logger.info("All messages sent. Deleting loading message...")
+        await loading_message.delete()
+        self.logger.info("Done creating album of the day images.")
+
+    @command(description="Create an image for an album from manual details.")
+    async def create_image_manually(
+        self,
+        interaction: Interaction,
+        album_name: str,
+        artists: str,
+        genres: str,
+        comments: str,
+        cover_url: Optional[str] = None,
+    ):
+        """Creates an image for an album of the day completely manually. Aka. does not involve the remote database,
+        just allows you to feed it text directly.
+
+        :param interaction: the interaction that was invoked by the use of this slash command.
+
+        :param album_name: The name of the album.
+
+        :param artists: All the artists for the album, comma-separated if multiple.
+
+        :param genres: All the genres for the album, comma-separated if multiple.
+
+        :param comments: All the comments for the album, comma-separated if multiple.
+
+        :param cover_url: A cover URL to the album, if any.
+        """
+        self.logger.info(
+            "Got a request to (manually) create an image for an album of the day."
+        )
+        await interaction.response.defer()
+        # ...send out loading message
+        logger.info("Sending out loading message...")
+        last_message = loading_message = await interaction.followup.send(
+            embed=CREATING_ALBUM_OF_THE_DAY_IMAGE_LOADING_MESSAGE
+        )
+        logger.info("Loading message sent.")
+        messages_kwargs = await create_album_of_the_day_image(
+            album_name=album_name,
+            artist_names=artists.split(","),
+            genre_names=genres.split(","),
+            font_path=self.image_font,
+            cover_url=cover_url,
+            comments=comments,
+        )
+        for i in range(len(messages_kwargs)):
+            message_kwargs = messages_kwargs[i]
+            logger.info(f"Sending message {i + 1}/{len(messages_kwargs)}...")
+            last_message = await last_message.reply(*message_kwargs)
+            logger.info(f"Message {i + 1}/{len(messages_kwargs)} sent.")
+        self.logger.info("All messages sent. Deleting loading message...")
+        await loading_message.delete()
+        self.logger.info("Done creating album of the day images.")
+
+    @create_image_for_album.autocomplete("album_of_the_day")
+    async def autocomplete_album_of_the_day(
+        self, interaction: Interaction, current_value: str
+    ) -> List[Choice[int]]:
+        """Autocompletes an album of the day from the cache."""
+        await self.sync_remote_album_of_the_days()
+        possible_options = []
+        for i in range(len(self.album_of_the_days_cache)):
+            (
+                album_of_the_day,
+                related_album,
+                album_artists,
+            ) = self.album_of_the_days_cache[i]
+            match_found = False
+            # Look in the album name first...
+            if current_value in related_album.name.lower():
+                match_found = True
+            # ...and then in the artist name!
+            album_artist_names = []
+            for album_artist in album_artists:
+                if current_value in album_artist.name.lower():
+                    match_found = True
+                album_artist_names.append(album_artist.name)
+            if match_found:
+                # Create a human representation of the album's date
+                album_of_the_day_date_text = album_of_the_day.date.strftime(
+                    "%-d/%-m-%y"
+                )
+                possible_options.append(
+                    Choice(
+                        name=f"{related_album.name} - {','.join(album_artist_names)} ({album_of_the_day_date_text})",
+                        value=i,
+                    )
+                )
+        # Ensure possible_options doesn't exceed 25 options
+        if len(possible_options) > 25:
+            possible_options = possible_options[:24]
+        return possible_options
+
 
 async def setup(bot: Bot):
     """Setup function that is called when the bot loads this extension.
@@ -954,3 +1190,4 @@ async def setup(bot: Bot):
     cog = CreateAlbumOfTheDay(bot)
     await cog.download_font()
     await bot.add_cog(cog)
+    await cog.sync_remote_album_of_the_days()

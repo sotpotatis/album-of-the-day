@@ -145,14 +145,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-if DEBUG:
-    LOGGING = {
-        "version": 1,
-        "django.db": {  # Log database queries if running in debug
-            "level": "DEBUG",
-            "handlers": ["console"],
-        },
-    }
 # Django-REST configuration
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [

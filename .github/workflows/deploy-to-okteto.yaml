@@ -1,0 +1,42 @@
+#deploy-to-okteto.yaml
+#Github Action that deploys the frontend and backend to Okteto.
+name: Deploy services to Okteto
+description: Deploys the frontend and backend services
+on: [push]
+jobs:
+  deploy-to-okteto:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 👀 Checkout code
+        uses: actions/checkout@master
+      - name: ➡️ Prepare backend environment
+        run: chmod +x prepare-backend-environment.sh && ./prepare-backend-environment.sh
+        env:
+          - DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          - DATABASE_USER: ${{ secrets.DATABASE_USER }}
+          - DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          - DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          - DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+          - DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+          - DATABASE_ENGINE: ${{ secrets.DATABASE_ENGINE }}
+          - LAST_FM_API_KEY: ${{ secrets.LAST_FM_API_KEY }}
+          - LAST_FM_USER_AGENT: ${{ secrets.LAST_FM_USER_AGENT }}
+          - LAST_FM_USERNAME: ${{ secrets.LAST_FM_USERNAME }}
+          - SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          - SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          - SPOTIFY_USER_AGENT: ${{ secrets.SPOTIFY_USER_AGENT }}
+          - FRONTEND_BASE_URL: ${{ secrets.FRONTEND_BASE_URL }}
+          - BASE_URL: ${{ secrets.BASE_URL }}
+          - BASE_DOMAIN: ${{ secrets.BASE_DOMAIN }}
+          - ALBUM_OF_THE_DAY_BOT_TOKEN: ${{ secrets.ALBUM_OF_THE_DAY_BOT_TOKEN }}
+          - ALBUM_IMAGES_FONT_PATH: ${{ secrets.ALBUM_IMAGES_FONT_PATH }}
+          - DJANGO_CSRF_ORIGINS: ${{ secrets.DJANGO_CSRF_ORIGINS }}
+      - name: ➡️ Start Okteto Context
+        uses: okteto/context@latest
+        with:
+            token: ${{ secrets.OKTETO_TOKEN }}
+      - name: 🔨 Build with Okteto
+        uses: okteto/build@latest
+        working-directory: /
+        with:
+          file: ./website/okteto.yml

@@ -13,6 +13,8 @@ export const BASE_URL = import.meta.env.DEV
  * a list that can be appended on to other data to paginate. Also receives any previous data stored by the server.
  * @param paginationLimit Maximum number of items to return.
  * @param previousEntries Internal parameter used for pagination. Previous data returned by paginationFunction.
+ * @param setCurrentPage For pagination, you can pass a function that will receive number of the current page that is being loaded.
+ * This can for example be used to provide a loading spinner.
  * @return {Promise<(boolean|Promise<any>)[]|boolean[]>} A list in the following format: [requestSucceeded, responseJSON].
  * Note: If requestSucceeded is false, then responseJSON might be null.
  */
@@ -23,7 +25,8 @@ export async function sendRequest(
 	queryArguments,
 	paginationFunction,
 	paginationLimit,
-	previousEntries
+	previousEntries,
+	setCurrentPage
 ) {
 	// Construct and send the request
 	let fetchOptions = {
@@ -79,6 +82,9 @@ export async function sendRequest(
 					paginationLimit < previousEntries.length
 				) {
 					queryArguments.page += 1;
+					if (setCurrentPage !== null && setCurrentPage !== undefined) {
+						setCurrentPage(queryArguments.page, previousEntries.length, responseJSON.count);
+					} // Update page number via external function if set
 					return await sendRequest(
 						path,
 						method,
@@ -86,7 +92,8 @@ export async function sendRequest(
 						queryArguments,
 						paginationFunction,
 						paginationLimit,
-						previousEntries
+						previousEntries,
+						setCurrentPage
 					);
 				}
 			} else if (paginationFunction !== null) {
@@ -304,7 +311,7 @@ export async function getAvailableMonths(itemType) {
  * @param filters The data for any filters to apply.
  * @return {Promise<(boolean|Promise<*>)[]|boolean[]>}
  */
-export async function getGenres(limit = null, filters = null) {
+export async function getGenres(limit = null, filters = null, setCurrentPage = null) {
 	let queryArguments = {};
 	if (limit !== null) {
 		queryArguments.limit = limit;
@@ -323,7 +330,9 @@ export async function getGenres(limit = null, filters = null) {
 		null,
 		queryArguments,
 		genericPaginationFunction,
-		limit
+		limit,
+		undefined,
+		setCurrentPage
 	);
 }
 /**

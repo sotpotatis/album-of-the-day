@@ -2,12 +2,17 @@
 Runs the bot and loads settings related to it."""
 import asyncio
 import os, logging, discord, sys
-from discord.ext.commands import Bot
-from discord.app_commands import CommandTree
+from contextvars import Context
+from typing import Any
+from discord.ext.commands import Bot, CommandError
+from discord.app_commands import CommandTree, CommandNotFound
+from discord.ext.commands._types import BotT
 
 # Prerequisites before importing commands: make them know how to talk to Django!
 sys.path.append("../..")
 os.environ["DJANGO_SETTINGS_MODULE"] = "album_of_the_day.settings"
+from commands.utilities import generate_error_message
+
 # Set up logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -55,6 +60,28 @@ class AlbumOfTheDayBot(Bot):
             )
         )
         logger.info("Presence set.")
+
+    async def on_command_error(self, ctx: Context, exception: CommandError, /) -> None:
+        """Error handler that runs if the bot encounters an error."""
+        # Prevent local handlers
+        if hasattr(ctx.command, "on_error"):
+            return
+        # Get root exception if available
+        exception = getattr(exception, "original", exception)
+        # If the error is relevant
+        if not isinstance(exception, CommandNotFound):
+            logger.critical(
+                f"The bot encountered an unhandled error: {exception}. Sending error message..."
+            )
+            error_embed = generate_error_message(
+                title="Fel: Ohanterat fel",
+                message="Ett ohanterat fel inträffade :( Se nedan för mer info.",
+            )
+            error_embed.add_field(
+                name="Felinformation", value=f"```\n{repr(exception)}```"
+            )
+            await ctx.send(embed=error_embed)
+            logger.info("Error message sent.")
 
 
 bot = AlbumOfTheDayBot()

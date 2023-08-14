@@ -40,23 +40,27 @@ Shows where you can find the album in the body. -->
 		{#if success !== false}
 			<SearchResult
 				searchType="album_of_the_days"
-				searchFilters={{
-					album_id: responseData.id
-				}}
+				searchFilters={!skeleton
+					? {
+							album_id: responseData.id
+					  }
+					: null}
 				title="Album of the day"
 				defaultCollapsed={true}
 			/>
 			<SearchResult
 				searchType="lists"
-				searchFilters={{ items_album_id: responseData.id }}
+				searchFilters={!skeleton ? { items_album_id: responseData.id } : null}
 				title="Listor"
 				defaultCollapsed={true}
 			/>
 			<SearchResult
 				searchType="daily_rotations"
-				searchFilters={{
-					albums_id: responseData.id
-				}}
+				searchFilters={!skeleton
+					? {
+							albums_id: responseData.id
+					  }
+					: null}
 				title="Dagliga rotationer"
 				defaultCollapsed={true}
 			/>
