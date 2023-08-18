@@ -33,6 +33,9 @@ jobs:
           ALBUM_OF_THE_DAY_BOT_TOKEN: ${{ secrets.ALBUM_OF_THE_DAY_BOT_TOKEN }}
           ALBUM_IMAGES_FONT_PATH: ${{ secrets.ALBUM_IMAGES_FONT_PATH }}
           DJANGO_CSRF_ORIGINS: ${{ secrets.DJANGO_CSRF_ORIGINS }}
+          ORACLE_SQLNET_FILE_CONTENTS: ${{ secrets.ORACLE_SQLNET_FILE_CONTENTS }}
+          ORACLE_TNSNAMES_FILE_CONTENTS: ${{ secrets.ORACLE_TNSNAMES_FILE_CONTENTS }}
+          TASK_RUNNER_CONFIG_FILE_CONTENTS: ${{ secrets.TASK_RUNNER_CONFIG_FILE_CONTENTS }}
       - name: Deploy on Okteto
         run: |
           cd website
