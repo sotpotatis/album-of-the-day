@@ -2,7 +2,6 @@
 #Github Action that deploys the frontend and backend to Okteto.
 name: Deploy services to Okteto
 on:
-  push:
   schedule: # Run periodically to prevent Okteto marking the application as stale
     - cron: 0 5 * * */2
 jobs:
@@ -33,7 +32,7 @@ jobs:
           ALBUM_OF_THE_DAY_BOT_TOKEN: ${{ secrets.ALBUM_OF_THE_DAY_BOT_TOKEN }}
           ALBUM_IMAGES_FONT_PATH: ${{ secrets.ALBUM_IMAGES_FONT_PATH }}
           DJANGO_CSRF_ORIGINS: ${{ secrets.DJANGO_CSRF_ORIGINS }}
-     - name: Deploy on Okteto
+      - name: Deploy on Okteto
        run:
          - curl https://get.okteto.com -sSfL | sh
          - okteto context use https://cloud.okteto.com
