@@ -44,4 +44,5 @@ jobs:
       - name: 🔨 Run Okteto pipeline
         uses: okteto/pipeline@latest
         with:
+          name: Commit ${{ github.sha }}
           filename: website/okteto-pipeline.yml
