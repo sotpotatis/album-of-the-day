@@ -35,8 +35,35 @@ jobs:
       - name: 👀 Checkout code
         uses: actions/checkout@master
       - name: ➡️ Prepare backend environment
-        run: chmod +x github_actions_scripts/prepare-backend-environment.sh &&
-          github_actions_scripts/prepare-backend-environment.sh
+        #run: chmod +x github_actions_scripts/prepare-backend-environment.sh &&
+        #  github_actions_scripts/prepare-backend-environment.sh
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          envkey_DATABASE_USER: ${{ secrets.DATABASE_USER }}
+          envkey_DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          envkey_DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          envkey_DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+          envkey_DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+          envkey_DATABASE_ENGINE: ${{ secrets.DATABASE_ENGINE }}
+          envkey_LAST_FM_API_KEY: ${{ secrets.LAST_FM_API_KEY }}
+          envkey_LAST_FM_USER_AGENT: ${{ secrets.LAST_FM_USER_AGENT }}
+          envkey_LAST_FM_USERNAME: ${{ secrets.LAST_FM_USERNAME }}
+          envkey_SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          envkey_SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          envkey_SPOTIFY_USER_AGENT: ${{ secrets.SPOTIFY_USER_AGENT }}
+          envkey_FRONTEND_BASE_URL: ${{ secrets.FRONTEND_BASE_URL }}
+          envkey_BASE_URL: ${{ secrets.BASE_URL }}
+          envkey_BASE_DOMAIN: ${{ secrets.BASE_DOMAIN }}
+          envkey_ALBUM_OF_THE_DAY_BOT_TOKEN: ${{ secrets.ALBUM_OF_THE_DAY_BOT_TOKEN }}
+          envkey_ALBUM_IMAGES_FONT_PATH: ${{ secrets.ALBUM_IMAGES_FONT_PATH }}
+          envkey_DJANGO_CSRF_ORIGINS: ${{ secrets.DJANGO_CSRF_ORIGINS }}
+          envkey_ORACLE_WALLET_FILE_CONTENTS: ${{ secrets.ORACLE_WALLET_FILE_CONTENTS }}
+          envkey_ORACLE_SQLNET_FILE_CONTENTS: ${{ secrets.ORACLE_SQLNET_FILE_CONTENTS }}
+          envkey_ORACLE_TNSNAMES_FILE_CONTENTS: ${{ secrets.ORACLE_TNSNAMES_FILE_CONTENTS }}
+          envkey_TASK_RUNNER_CONFIG_FILE_CONTENTS: ${{ secrets.TASK_RUNNER_CONFIG_FILE_CONTENTS }}
+          directory: website/backend/album_of_the_day_backend
+          file_name: backend.env
       - name: Deploy on Okteto
         run: |
           cd website
