@@ -8,6 +8,7 @@
 #Note that environment variables will not be expanded to files if the target file
 #already exists.
 echo "Expanding environment files if needed..."
+ls
 mkdir -p album_of_the_day_backend/.wallet/ #Will not throw error if the directory exists => no check needed!
 #Expand cwallet.ora
 if test -f "album_of_the_day_backend/.wallet/cwallet.sso";then
