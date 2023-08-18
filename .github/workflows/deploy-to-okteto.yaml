@@ -7,35 +7,35 @@ on:
 jobs:
   deploy-to-okteto:
     runs-on: ubuntu-latest
+    env:
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      DATABASE_USER: ${{ secrets.DATABASE_USER }}
+      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+      DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+      DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+      DATABASE_ENGINE: ${{ secrets.DATABASE_ENGINE }}
+      LAST_FM_API_KEY: ${{ secrets.LAST_FM_API_KEY }}
+      LAST_FM_USER_AGENT: ${{ secrets.LAST_FM_USER_AGENT }}
+      LAST_FM_USERNAME: ${{ secrets.LAST_FM_USERNAME }}
+      SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+      SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+      SPOTIFY_USER_AGENT: ${{ secrets.SPOTIFY_USER_AGENT }}
+      FRONTEND_BASE_URL: ${{ secrets.FRONTEND_BASE_URL }}
+      BASE_URL: ${{ secrets.BASE_URL }}
+      BASE_DOMAIN: ${{ secrets.BASE_DOMAIN }}
+      ALBUM_OF_THE_DAY_BOT_TOKEN: ${{ secrets.ALBUM_OF_THE_DAY_BOT_TOKEN }}
+      ALBUM_IMAGES_FONT_PATH: ${{ secrets.ALBUM_IMAGES_FONT_PATH }}
+      DJANGO_CSRF_ORIGINS: ${{ secrets.DJANGO_CSRF_ORIGINS }}
+      ORACLE_SQLNET_FILE_CONTENTS: ${{ secrets.ORACLE_SQLNET_FILE_CONTENTS }}
+      ORACLE_TNSNAMES_FILE_CONTENTS: ${{ secrets.ORACLE_TNSNAMES_FILE_CONTENTS }}
+      TASK_RUNNER_CONFIG_FILE_CONTENTS: ${{ secrets.TASK_RUNNER_CONFIG_FILE_CONTENTS }}
     steps:
       - name: 👀 Checkout code
         uses: actions/checkout@master
       - name: ➡️ Prepare backend environment
         run: chmod +x github_actions_scripts/prepare-backend-environment.sh &&
           github_actions_scripts/prepare-backend-environment.sh
-        env:
-          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-          DATABASE_USER: ${{ secrets.DATABASE_USER }}
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-          DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
-          DATABASE_ENGINE: ${{ secrets.DATABASE_ENGINE }}
-          LAST_FM_API_KEY: ${{ secrets.LAST_FM_API_KEY }}
-          LAST_FM_USER_AGENT: ${{ secrets.LAST_FM_USER_AGENT }}
-          LAST_FM_USERNAME: ${{ secrets.LAST_FM_USERNAME }}
-          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
-          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-          SPOTIFY_USER_AGENT: ${{ secrets.SPOTIFY_USER_AGENT }}
-          FRONTEND_BASE_URL: ${{ secrets.FRONTEND_BASE_URL }}
-          BASE_URL: ${{ secrets.BASE_URL }}
-          BASE_DOMAIN: ${{ secrets.BASE_DOMAIN }}
-          ALBUM_OF_THE_DAY_BOT_TOKEN: ${{ secrets.ALBUM_OF_THE_DAY_BOT_TOKEN }}
-          ALBUM_IMAGES_FONT_PATH: ${{ secrets.ALBUM_IMAGES_FONT_PATH }}
-          DJANGO_CSRF_ORIGINS: ${{ secrets.DJANGO_CSRF_ORIGINS }}
-          ORACLE_SQLNET_FILE_CONTENTS: ${{ secrets.ORACLE_SQLNET_FILE_CONTENTS }}
-          ORACLE_TNSNAMES_FILE_CONTENTS: ${{ secrets.ORACLE_TNSNAMES_FILE_CONTENTS }}
-          TASK_RUNNER_CONFIG_FILE_CONTENTS: ${{ secrets.TASK_RUNNER_CONFIG_FILE_CONTENTS }}
       - name: Deploy on Okteto
         run: |
           cd website
