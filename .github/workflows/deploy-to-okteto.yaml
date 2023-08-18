@@ -34,9 +34,9 @@ jobs:
           ALBUM_IMAGES_FONT_PATH: ${{ secrets.ALBUM_IMAGES_FONT_PATH }}
           DJANGO_CSRF_ORIGINS: ${{ secrets.DJANGO_CSRF_ORIGINS }}
       - name: Deploy on Okteto
-        run:
-          - curl https://get.okteto.com -sSfL | sh
-          - okteto context use https://cloud.okteto.com
-          - okteto login --token ${{ secrets.OKTETO_TOKEN }}
-          - cd website
-          - okteto deploy --build
+        run: |
+          curl https://get.okteto.com -sSfL | sh
+          okteto context use https://cloud.okteto.com
+          okteto login --token ${{ secrets.OKTETO_TOKEN }}
+          cd website
+          okteto deploy --build
