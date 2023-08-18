@@ -1,7 +1,10 @@
 #deploy-to-okteto.yaml
 #Github Action that deploys the frontend and backend to Okteto.
 name: Deploy services to Okteto
-on: [push]
+on:
+  push:
+  schedule: # Run periodically to prevent Okteto marking the application as stale
+    - cron: 0 5 * * */2
 jobs:
   deploy-to-okteto:
     runs-on: ubuntu-latest
@@ -37,7 +40,7 @@ jobs:
       - name: ➡️ Activate Okteto namespace
         uses: okteto/namespace@latest
         with:
-          name: ${{ secrets.OKTETO_NAMESPACE }}
+          namespace: ${{ secrets.OKTETO_NAMESPACE }}
       - name: 🔨 Run Okteto pipeline
         uses: okteto/pipeline@latest
         with:
