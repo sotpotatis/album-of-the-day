@@ -37,4 +37,4 @@ jobs:
       - name: 🔨 Build with Okteto
         uses: okteto/build@latest
         with:
-          file: website/okteto.yml
+          path: website
