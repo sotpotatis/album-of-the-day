@@ -34,7 +34,11 @@ jobs:
         uses: okteto/context@latest
         with:
             token: ${{ secrets.OKTETO_TOKEN }}
-      - name: 🔨 Build with Okteto
-        uses: okteto/build@latest
+      - name: ➡️ Activate Okteto namespace
+          uses: okteto/namespace@latest
+          with:
+            name: ${{ secrets.OKTETO_NAMESPACE }}
+      - name: 🔨 Run Okteto pipeline
+        uses: okteto/pipeline@latest
         with:
-          path: website
+          filename: website/okteto-pipeline.yml

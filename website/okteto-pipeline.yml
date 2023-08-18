@@ -1,0 +1,4 @@
+deploy:
+  - ls #Debugging
+  - cd website/ #Ensure path is correct
+  - okteto deploy --build #Deploy and build
