@@ -6,4 +6,5 @@
 #We dump all our secrets to there!
 echo "Dumping backend environment variables..."
 #printenv > "website/backend/album_of_the_day_backend/backend.env" || exit 1
+touch "website/backend/album_of_the_day_backend/backend.env"
 echo "Variables dumped to file."
