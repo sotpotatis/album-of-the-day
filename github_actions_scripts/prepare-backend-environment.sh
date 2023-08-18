@@ -5,5 +5,5 @@
 #dumped at /website/backend/backend.env.
 #We dump all our secrets to there!
 echo "Dumping backend environment variables..."
-printenv > "./website/backend/backend.env" || exit 1
+printenv > "website/backend/backend.env" || exit 1
 echo "Variables dumped to file."
