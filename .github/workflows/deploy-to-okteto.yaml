@@ -34,9 +34,15 @@ jobs:
     steps:
       - name: 👀 Checkout code
         uses: actions/checkout@master
+      - name: ➡️ Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
       - name: ➡️ Prepare backend environment
         #run: chmod +x github_actions_scripts/prepare-backend-environment.sh &&
         #  github_actions_scripts/prepare-backend-environment.sh
+        run: |
+          python github_actions_scripts/prepare-backend-environment.py
         uses: SpicyPizza/create-envfile@v2.0
         with:
           envkey_DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
