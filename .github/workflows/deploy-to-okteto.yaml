@@ -33,16 +33,10 @@ jobs:
           ALBUM_OF_THE_DAY_BOT_TOKEN: ${{ secrets.ALBUM_OF_THE_DAY_BOT_TOKEN }}
           ALBUM_IMAGES_FONT_PATH: ${{ secrets.ALBUM_IMAGES_FONT_PATH }}
           DJANGO_CSRF_ORIGINS: ${{ secrets.DJANGO_CSRF_ORIGINS }}
-      - name: ➡️ Start Okteto Context
-        uses: okteto/context@latest
-        with:
-            token: ${{ secrets.OKTETO_TOKEN }}
-      - name: ➡️ Activate Okteto namespace
-        uses: okteto/namespace@latest
-        with:
-          namespace: ${{ secrets.OKTETO_NAMESPACE }}
-      - name: 🔨 Run Okteto pipeline
-        uses: okteto/pipeline@latest
-        with:
-          name: Commit ${{ github.sha }}
-          filename: website/okteto-pipeline.yml
+     - name: Deploy on Okteto
+       run:
+         - curl https://get.okteto.com -sSfL | sh
+         - okteto context use https://cloud.okteto.com
+         - okteto login --token ${{ secrets.OKTETO_TOKEN }}
+         - cd website
+         - okteto deploy --build
