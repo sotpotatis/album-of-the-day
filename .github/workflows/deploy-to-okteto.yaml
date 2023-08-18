@@ -27,6 +27,7 @@ jobs:
       ALBUM_OF_THE_DAY_BOT_TOKEN: ${{ secrets.ALBUM_OF_THE_DAY_BOT_TOKEN }}
       ALBUM_IMAGES_FONT_PATH: ${{ secrets.ALBUM_IMAGES_FONT_PATH }}
       DJANGO_CSRF_ORIGINS: ${{ secrets.DJANGO_CSRF_ORIGINS }}
+      ORACLE_WALLET_FILE_CONTENTS: ${{ secrets.ORACLE_WALLET_FILE_CONTENTS }}
       ORACLE_SQLNET_FILE_CONTENTS: ${{ secrets.ORACLE_SQLNET_FILE_CONTENTS }}
       ORACLE_TNSNAMES_FILE_CONTENTS: ${{ secrets.ORACLE_TNSNAMES_FILE_CONTENTS }}
       TASK_RUNNER_CONFIG_FILE_CONTENTS: ${{ secrets.TASK_RUNNER_CONFIG_FILE_CONTENTS }}
@@ -39,6 +40,7 @@ jobs:
       - name: Deploy on Okteto
         run: |
           cd website
+          export $(cat .backend/album_of_the_day_backend/.env | xargs)
           curl https://get.okteto.com -sSfL | sh
           okteto context use https://cloud.okteto.com --token ${{ secrets.OKTETO_TOKEN }}
           okteto deploy --build
