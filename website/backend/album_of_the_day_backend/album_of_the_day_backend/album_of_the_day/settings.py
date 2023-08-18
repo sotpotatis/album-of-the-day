@@ -26,10 +26,18 @@ logging.basicConfig(
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# If using the Oracle Cloud database, you can set an ORACLE_DATABASE_CLIENT_PATH variable
-# to specify where you have installed the library, if you don't want to add it to
-# path or is unable to get it to work (like me)
+
 DATABASE_ENGINE = os.environ.get("DATABASE_ENGINE", "django.db.backends.postgresql")
+# Some database connection optimizations.
+# Set the max age to 0 by default so that Django doesn't preserve database connections.
+CONN_MAX_AGE = int(os.environ.get("DATABASE_CONNECTION_AGE", 0))
+# Enable connection health checks by default. From the Django documentation:
+# "If set to True, existing persistent database connections
+# will be health checked before they are reused in each request performing database access.
+# If the health check fails, the connection will be reestablished without failing the request
+# when the connection is no longer usable but the database server is ready to accept and '
+# serve new connections (e.g. after database server restart closing existing connections)."
+CONN_HEALTH_CHECKS = bool(os.environ.get("DATABASE_HEALTH_CHECKS", True))
 DATABASE_OPTIONS = {}
 if DATABASE_ENGINE == "django.db.backends.oracle":
     ORACLE_DATABASE_CONFIG_DIR = os.environ.get(
@@ -40,6 +48,9 @@ if DATABASE_ENGINE == "django.db.backends.oracle":
             f"""The wallet file path {ORACLE_DATABASE_CONFIG_DIR} does not exist. 
         It must exist to make the database connection possible."""
         )
+    # If using the Oracle Cloud database, you can set an ORACLE_DATABASE_CLIENT_PATH variable
+    # to specify where you have installed the library, if you don't want to add it to
+    # path or is unable to get it to work (like me)
     cx_Oracle.init_oracle_client(
         lib_dir=os.environ.get("ORACLE_DATABASE_CLIENT_PATH", None),
         config_dir=ORACLE_DATABASE_CONFIG_DIR,

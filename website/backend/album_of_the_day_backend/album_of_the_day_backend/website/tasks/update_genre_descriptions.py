@@ -8,7 +8,6 @@ import django
 django.setup()
 from website.models import Genre
 from last_fm_api_client.client import Client, LastFMDataNotFound
-from dotenv import load_dotenv
 import logging, os, re
 
 LAST_FM_GENRE_DESCRIPTION_FILTER_REGEX = re.compile("([\s\S]+)Read more([\s\S]*)")
@@ -16,7 +15,6 @@ LAST_FM_GENRE_DESCRIPTION_FILTER_REGEX = re.compile("([\s\S]+)Read more([\s\S]*)
 
 def update_genre_descriptions():
     """Updates the descriptions for all genres in the database based on online metadata."""
-    load_dotenv()
     # Set up logging
     logger = logging.getLogger(__name__)
     # Initialize client

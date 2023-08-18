@@ -9,7 +9,6 @@ django.setup()
 from website.models import DailyRotation, Album, Artist, Genre
 from last_fm_api_client.client import Client, LastFMDataNotFound
 from last_fm_api_client.models import RecentTrack, AlbumDetails
-from dotenv import load_dotenv
 from typing import List, Tuple
 import logging, os, datetime, pytz
 import util
@@ -19,7 +18,6 @@ def update_daily_rotations():
     """update_daily_rotations.py
     Updates the "Daily rotations" which is a list showing what I have listened to for a certain day.
     """
-    load_dotenv()
     # Set up logging
     logger = logging.getLogger(__name__)
     # Initialize client

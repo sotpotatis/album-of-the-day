@@ -3,15 +3,13 @@ Runs the bot and loads settings related to it."""
 import asyncio
 import os, logging, discord, sys
 from contextvars import Context
-from typing import Any
 from discord.ext.commands import Bot, CommandError
-from discord.app_commands import CommandTree, CommandNotFound
-from discord.ext.commands._types import BotT
+from discord.app_commands import CommandNotFound
 
 # Prerequisites before importing commands: make them know how to talk to Django!
 sys.path.append("../..")
 os.environ["DJANGO_SETTINGS_MODULE"] = "album_of_the_day.settings"
-from commands.utilities import generate_error_message
+from commands.utilities import generate_error_message, refresh_database_connections
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -36,6 +34,13 @@ class AlbumOfTheDayBot(Bot):
             "commands.generic",
             "commands.create_list",
         ]
+        self.logger = logging.getLogger(__name__)  # Create a logger
+
+    async def before_invoke(self, coro):
+        """Runs before commands are invoked. Refreshes the database connection."""
+        self.logger.info("Pre-command: refreshing database connections...")
+        refresh_database_connections()
+        self.logger.info("Pre-command: Database connections refreshed.")
 
     async def setup_hook(self) -> None:
         """Sets up extensions."""

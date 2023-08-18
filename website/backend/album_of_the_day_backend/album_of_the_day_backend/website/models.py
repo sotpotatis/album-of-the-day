@@ -87,7 +87,7 @@ class Genre(models.Model):
         help_text='The name of the genre, e.g. "avant-folk".',
     )
     description = models.CharField(
-        max_length=5000,
+        max_length=10000,
         null=True,
         blank=True,
         default=None,

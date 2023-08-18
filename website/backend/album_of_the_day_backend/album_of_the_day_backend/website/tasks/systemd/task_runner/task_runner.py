@@ -23,9 +23,11 @@ def run(task_name: str):
         DEFAULT_HEALTH_CONFIG = {"enabled": False, "engine": None}
         # Load sections
         BASIC_CONFIG = CONFIG["basics"]
-        TASKS_DIRECTORY = BASIC_CONFIG["tasks_dir"]
-        WEBSITE_DIRECTORY = BASIC_CONFIG.get(
-            "website_directory", os.path.dirname(os.path.dirname(TASKS_DIRECTORY))
+        TASKS_DIRECTORY = os.path.abspath(BASIC_CONFIG["tasks_dir"])
+        WEBSITE_DIRECTORY = os.path.abspath(
+            BASIC_CONFIG.get(
+                "website_directory", os.path.dirname(os.path.dirname(TASKS_DIRECTORY))
+            )
         )
         # This (PYTHON_COMMAND_BASE) can be used to run scripts with a different prepended command than python.
         # For example, to run scripts as python3 <filename>, you can set it to "python3"
@@ -74,10 +76,19 @@ def run(task_name: str):
     if "PYTHONPATH" not in environment:
         environment["PYTHONPATH"] = ""
     environment["PYTHONPATH"] += WEBSITE_DIRECTORY
-    environment["DJANGO_SETTINGS_MODULE"] = "album_of_the_day.settings"
-    environment.setdefault("DJANGO_SETTINGS_MODULE", "album_of_the_day.settings")
+    if not bool(os.environ.get("DJANGO_SETTINGS_MODULE_ALREADY_SET", False)):
+        environment["DJANGO_SETTINGS_MODULE"] = "album_of_the_day.settings"
+        environment.setdefault("DJANGO_SETTINGS_MODULE", "album_of_the_day.settings")
+    else:
+        logger.info("Settings provided by user.")
+    logger.info("Setting up Django environment...")
+    logger.info(f"(Django settings module: {environment['DJANGO_SETTINGS_MODULE']})")
+    # Set up Django environment
+    import django
+
+    django.setup()
     logger.debug(f"Created environment: {environment}")
-    logger.info("Running the task...")
+    logger.info(f"Running the task {task_name}...")
     command = f"{PYTHON_COMMAND_BASE} {TASK_FILE}"
     return_code = subprocess.call(command, shell=True, env=environment)
     # Parse output

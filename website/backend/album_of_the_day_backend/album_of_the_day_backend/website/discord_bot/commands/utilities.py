@@ -1,8 +1,10 @@
 """utilities.py
 Various constants and utilities."""
 import datetime
+import logging
 from difflib import SequenceMatcher
 
+import django.db
 import pytz, os
 from discord import Color, Embed
 from typing import Optional, List, Type, Callable
@@ -19,6 +21,9 @@ ERROR_EMBED_COLOR = Color.red()
 LOADING_SPINNER_URL = (
     "https://i.ibb.co/LtQDH8J/loading-spinner.gif"  # URL to a loading spinner URL
 )
+
+# Create a logger that may be used by functions
+logger = logging.getLogger(__name__)
 
 
 # Helper functions
@@ -122,3 +127,22 @@ def get_all(
     for model_instance in thing_accessor.all():
         model_instances.append(model_instance)
     return model_instances
+
+
+def refresh_database_connections():
+    """Refreshes Django database connections. This is used to optimize the
+    connections used by the bot since they are long-running.
+    """
+    # Close old connections
+    logger.info("Refreshing database connections...")
+    closed_connections = 0  # Count number fo closed connections
+    for connection in django.db.connections.all():
+        connection.close_if_unusable_or_obsolete()
+        if (
+            connection.connection is None
+        ):  # This indicates that the connection has been closed
+            closed_connections += 1
+    logger.info(f"Closed {closed_connections} old or unusable database connections.")
+    # Start a new connection
+    django.db.connection.connect()
+    logger.info("Updated database connection.")

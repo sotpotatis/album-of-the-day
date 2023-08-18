@@ -13,6 +13,11 @@ PARENT_DIRECTORY = os.path.dirname(FILE_PATH)  # Get parent directory
 ROOT_DIRECTORY = os.path.dirname(
     PARENT_DIRECTORY
 )  # Get the path of the root code for the website and other apps
+os.environ["DJANGO_SETTINGS_MODULE"] = "../../album_of_the_day.settings"
+os.environ.setdefault(
+    os.environ["DJANGO_SETTINGS_MODULE"], os.environ["DJANGO_SETTINGS_MODULE"]
+)
+os.environ["DJANGO_SETTINGS_MODULE_ALREADY_SET"] = "True"
 
 
 # Define tasks
