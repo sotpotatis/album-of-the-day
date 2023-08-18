@@ -35,9 +35,9 @@ jobs:
         with:
             token: ${{ secrets.OKTETO_TOKEN }}
       - name: ➡️ Activate Okteto namespace
-          uses: okteto/namespace@latest
-          with:
-            name: ${{ secrets.OKTETO_NAMESPACE }}
+        uses: okteto/namespace@latest
+        with:
+          name: ${{ secrets.OKTETO_NAMESPACE }}
       - name: 🔨 Run Okteto pipeline
         uses: okteto/pipeline@latest
         with:
