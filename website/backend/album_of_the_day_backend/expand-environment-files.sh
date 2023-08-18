@@ -16,7 +16,7 @@ if test -f "album_of_the_day_backend/.wallet/cwallet.sso";then
 else
    echo "Expanding cwallet.sso file from environment variables..."
   touch album_of_the_day_backend/.wallet/cwallet.sso
-  base64 -d "$ORACLE_WALLET_FILE_CONTENTS" >> album_of_the_day_backend/wallet/cwallet.sso
+  base64 -d "$ORACLE_WALLET_FILE_CONTENTS" >> album_of_the_day_backend/.wallet/cwallet.sso
 fi
 #Expand sqlnet.ora file
 if test -f "album_of_the_day_backend/.wallet/sqlnet.ora";then
@@ -24,7 +24,7 @@ if test -f "album_of_the_day_backend/.wallet/sqlnet.ora";then
 else
   echo "Expanding sqlnet.ora file from environment variables..."
   touch album_of_the_day_backend/.wallet/sqlnet.ora
-  base64 -d "$ORACLE_SQLNET_FILE_CONTENTS" >> album_of_the_day_backend/wallet/sqlnet.ora
+  base64 -d "$ORACLE_SQLNET_FILE_CONTENTS" >> album_of_the_day_backend/.wallet/sqlnet.ora
 fi
 #Expand tnsnames.ora file
 if test -f "album_of_the_day_backend/.wallet/tnsnames.ora";then
@@ -32,7 +32,7 @@ if test -f "album_of_the_day_backend/.wallet/tnsnames.ora";then
 else
   echo "Expanding tnsnames.ora file from environment variables..."
   touch album_of_the_day_backend/.wallet/tnsnames.ora
-  base64 -d "$ORACLE_TNSNAMES_FILE_CONTENTS" >> album_of_the_day_backend/wallet/tnsnames.ora
+  base64 -d "$ORACLE_TNSNAMES_FILE_CONTENTS" >> album_of_the_day_backend/.wallet/tnsnames.ora
 fi
 #Done with those, now let's do the Toml config file for the task runner!
 #Expand task runner config file
