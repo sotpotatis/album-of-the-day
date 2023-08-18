@@ -40,7 +40,7 @@ jobs:
       - name: Deploy on Okteto
         run: |
           cd website
-          export $(cat .backend/album_of_the_day_backend/.env | xargs)
+          export $(cat backend/album_of_the_day_backend/backend.env | xargs)
           curl https://get.okteto.com -sSfL | sh
           okteto context use https://cloud.okteto.com --token ${{ secrets.OKTETO_TOKEN }}
           okteto deploy --build
