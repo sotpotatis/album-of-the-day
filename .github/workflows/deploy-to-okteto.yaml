@@ -1,8 +1,7 @@
-#deploy-to-okteto.yaml
-#Github Action that deploys the frontend and backend to Okteto.
+---
 name: Deploy services to Okteto
 on:
-  schedule: # Run periodically to prevent Okteto marking the application as stale
+  schedule:
     - cron: 0 5 * * */2
 jobs:
   deploy-to-okteto:
@@ -11,7 +10,8 @@ jobs:
       - name: 👀 Checkout code
         uses: actions/checkout@master
       - name: ➡️ Prepare backend environment
-        run: chmod +x github_actions_scripts/prepare-backend-environment.sh && github_actions_scripts/prepare-backend-environment.sh
+        run: chmod +x github_actions_scripts/prepare-backend-environment.sh &&
+          github_actions_scripts/prepare-backend-environment.sh
         env:
           DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
           DATABASE_USER: ${{ secrets.DATABASE_USER }}
@@ -34,8 +34,8 @@ jobs:
           DJANGO_CSRF_ORIGINS: ${{ secrets.DJANGO_CSRF_ORIGINS }}
       - name: Deploy on Okteto
         run:
-         - curl https://get.okteto.com -sSfL | sh
-         - okteto context use https://cloud.okteto.com
-         - okteto login --token ${{ secrets.OKTETO_TOKEN }}
-         - cd website
-         - okteto deploy --build
+          - curl https://get.okteto.com -sSfL | sh
+          - okteto context use https://cloud.okteto.com
+          - okteto login --token ${{ secrets.OKTETO_TOKEN }}
+          - cd website
+          - okteto deploy --build
