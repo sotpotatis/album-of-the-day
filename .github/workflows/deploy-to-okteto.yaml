@@ -9,7 +9,7 @@ jobs:
       - name: 👀 Checkout code
         uses: actions/checkout@master
       - name: ➡️ Prepare backend environment
-        run: github_actions_scripts && chmod +x github_actions_scripts/prepare-backend-environment.sh && github_actions_scripts/prepare-backend-environment.sh
+        run: chmod +x github_actions_scripts/prepare-backend-environment.sh && github_actions_scripts/prepare-backend-environment.sh
         env:
           DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
           DATABASE_USER: ${{ secrets.DATABASE_USER }}
