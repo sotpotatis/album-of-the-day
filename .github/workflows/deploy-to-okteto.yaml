@@ -43,6 +43,7 @@ jobs:
         #  github_actions_scripts/prepare-backend-environment.sh
         run: |
           python github_actions_scripts/prepare-backend-environment.py
+      - name: ➡️ Create environment file
         uses: SpicyPizza/create-envfile@v2.0
         with:
           envkey_DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
