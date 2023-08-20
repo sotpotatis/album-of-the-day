@@ -48,7 +48,7 @@ def expand_files() -> None:
                 logger.info("File expanded.")
             else:
                 raise FileNotFoundError(
-                    f"Missing file {file_to_expand} in file system!"
+                    f"Missing file {file_to_expand} in file system, and no corresponding environment variable is defined for it!"
                 )
 
 
