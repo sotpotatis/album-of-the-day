@@ -23,6 +23,9 @@ LOGGING_LEVELS = {
 logging.basicConfig(
     level=LOGGING_LEVELS[os.environ.get("LOGGING_LEVEL", "info").lower()]
 )
+from expand_files_from_environment import expand_files
+
+expand_files()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
