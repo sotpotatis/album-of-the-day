@@ -34,7 +34,7 @@ def expand_files() -> None:
                 f"Not expanding {file_to_expand}: already exists on target filesystem."
             )
         else:
-            if os.getenv(environment_variable_to_use, None) is not None:
+            if os.environ.get(environment_variable_to_use, None) is not None:
                 logger.info(
                     f"Expanding Base64 encoded environment variable {environment_variable_to_use}..."
                 )
