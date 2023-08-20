@@ -38,11 +38,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - name: ➡️ Prepare backend environment
+      #- name: ➡️ Prepare backend environment
         #run: chmod +x github_actions_scripts/prepare-backend-environment.sh &&
         #  github_actions_scripts/prepare-backend-environment.sh
-        run: |
-          python github_actions_scripts/prepare-backend-environment.py
+        #run: |
+        #  python github_actions_scripts/prepare-backend-environment.py
       - name: ➡️ Create environment file
         uses: SpicyPizza/create-envfile@v2.0
         with:

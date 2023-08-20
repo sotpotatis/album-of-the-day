@@ -13,16 +13,15 @@ RUN unzip archivo-black.zip
 # Set environment variable to where the font was downloaded
 ENV ALBUM_IMAGES_FONT_PATH=$(pwd)/archivo-black/ArchivoBlack-Regular.zip
 WORKDIR /app
-# Decode Base64 environment variables to create files
-RUN chmod +x ./expand-environment-files.sh
-RUN ./expand-environment-files.sh
 # Install Poetry and dependencies
 RUN curl -sSL https://install.python-poetry.org | python3.9 -
 # Add Poetry to path
 ENV PATH="/root/.local/bin:$PATH"
 # Install dependencies using Poetry
 RUN poetry install
-# And now just run the server
 WORKDIR album_of_the_day_backend
+# Decode environment variables from Base64
+RUN poetry run python ./album_of_the_day/expand_files_from_environment.py
+# And now just run the server
 EXPOSE 8080
 ENTRYPOINT ["poetry", "run", "uvicorn", "album_of_the_day.asgi:application", "--host=0.0.0.0", "--port=8080"]

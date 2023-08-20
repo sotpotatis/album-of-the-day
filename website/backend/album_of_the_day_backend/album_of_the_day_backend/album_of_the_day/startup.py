@@ -39,19 +39,35 @@ def run_task_runner():
     import task_runner_infinite
 
 
-# List of tasks to run and a readable name for them
-TASKS_TO_RUN: List[Tuple[Callable, str]] = [
-    (start_discord_bot, "Discord bot"),
-    (run_task_runner, "Task runner"),
+def expand_files_from_environment():
+    """Expands files from environment variables if needed"""
+    logger.info("Expanding files from environment variables...")
+    from expand_files_from_environment import expand_files
+
+    expand_files()
+    logger.info("Files expanded if needed.")
+
+
+# List of tasks to run, a readable name for them, and if they should be threaded or not
+TASKS_TO_RUN: List[Tuple[Callable, str, bool]] = [
+    # (expand_files_from_environment, "Expand files from environment variables", False), # Moved to Dockerfile
+    (start_discord_bot, "Discord bot", True),
+    (run_task_runner, "Task runner", True),
 ]
 
 
 def run_startup_tasks():
-    """Runs all the defined startup tasks by spawing them in threads."""
+    """Runs all the defined startup tasks by spawning them in threads.
+    Also runs a task to decode files from environment variables."""
     # Start all tasks in threads
-    for task_to_run, name_of_task in TASKS_TO_RUN:
-        logger.info(f"Starting a thread for {name_of_task}...")
-        thread = Thread(target=task_to_run)
-        thread.daemon = True
-        thread.start()
-        logger.info(f"Thread for {name_of_task} was started.")
+    for task_to_run, name_of_task, thread_task in TASKS_TO_RUN:
+        if thread_task:  # Run threaded if set to, otherwise run synchronous
+            logger.info(f"Starting a thread for {name_of_task}...")
+            thread = Thread(target=task_to_run)
+            thread.daemon = True
+            thread.start()
+            logger.info(f"Thread for {name_of_task} was started.")
+        else:
+            logger.info(f"Starting {name_of_task}...")
+            task_to_run()
+            logger.info(f"Task {name_of_task} finished.")
