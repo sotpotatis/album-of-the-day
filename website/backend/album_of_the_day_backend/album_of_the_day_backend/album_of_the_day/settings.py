@@ -20,13 +20,12 @@ LOGGING_LEVELS = {
     "warning": logging.WARNING,
     "critical": logging.CRITICAL,
 }
-logging.basicConfig(
-    level=LOGGING_LEVELS[os.environ.get("LOGGING_LEVEL", "info").lower()]
-)
+USER_LOGGING_LEVEL = os.environ.get("LOGGING_LEVEL", "info").lower()
+logging.basicConfig(level=LOGGING_LEVELS[USER_LOGGING_LEVEL])
 # Print all environment variables
 logger.debug("Environment variables:")
 for environment_variable_name, environment_variable_value in os.environ.items():
-    logger.debug(f"{environment_variable_name}:{environment_variable_value}'")
+    logger.debug(f'{environment_variable_name}:"{environment_variable_value}"')
 logger.debug("(end of environment variables)")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -53,6 +52,16 @@ if DATABASE_ENGINE == "django.db.backends.oracle":
             f"""The wallet file path {ORACLE_DATABASE_CONFIG_DIR} does not exist. 
         It must exist to make the database connection possible."""
         )
+    logger.debug(
+        f"Wallet directory contents: {os.listdir(ORACLE_DATABASE_CONFIG_DIR)}."
+    )
+    # Print out the contents of each wallet file if the user has debugging enabled
+    if USER_LOGGING_LEVEL == "debug":
+        for wallet_subfile in os.listdir(ORACLE_DATABASE_CONFIG_DIR):
+            full_subfile_path = os.path.join(ORACLE_DATABASE_CONFIG_DIR, wallet_subfile)
+            logger.debug(
+                f"Contents of {full_subfile_path}: {open(full_subfile_path, 'r').read()}"
+            )
     # If using the Oracle Cloud database, you can set an ORACLE_DATABASE_CLIENT_PATH variable
     # to specify where you have installed the library, if you don't want to add it to
     # path or is unable to get it to work (like me)
