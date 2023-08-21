@@ -43,13 +43,19 @@ def expand_files() -> None:
                     logger.info(
                         f"Expanding Base64 encoded environment variable {environment_variable_to_use}..."
                     )
-                    os.makedirs(
-                        os.path.dirname(file_to_expand), exist_ok=True
-                    )  # Create any directories of needed
-                    with open(file_to_expand, "wb") as new_file:
+                    parent_directory = os.path.dirname(file_to_expand)
+                    if not os.path.exists(parent_directory):
+                        logger.info(f"Creating directory {parent_directory}...")
+                        os.mkdir(parent_directory)
+                        logger.info(f"Directory {parent_directory} created.")
+                    with open(file_to_expand, "wb+") as new_file:
                         new_file.write(
                             base64.b64decode(os.environ[environment_variable_to_use])
                         )
+                        if len(new_file.read()) == 0:
+                            error_message = f"New contents of {file_to_expand} is 0. Please check your environment variables!"
+                            logger.critical(error_message)
+                            raise ValueError(error_message)
                     logger.info("File expanded.")
                 else:
                     raise FileNotFoundError(
