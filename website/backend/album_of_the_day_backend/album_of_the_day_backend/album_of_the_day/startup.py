@@ -39,18 +39,8 @@ def run_task_runner():
     import task_runner_infinite
 
 
-def expand_files_from_environment():
-    """Expands files from environment variables if needed"""
-    logger.info("Expanding files from environment variables...")
-    from expand_files_from_environment import expand_files
-
-    expand_files()
-    logger.info("Files expanded if needed.")
-
-
 # List of tasks to run, a readable name for them, and if they should be threaded or not
 TASKS_TO_RUN: List[Tuple[Callable, str, bool]] = [
-    # (expand_files_from_environment, "Expand files from environment variables", False),
     (start_discord_bot, "Discord bot", True),
     (run_task_runner, "Task runner", True),
 ]

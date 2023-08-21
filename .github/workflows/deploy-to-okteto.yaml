@@ -50,8 +50,12 @@ jobs:
           envkey_DATABASE_USER: ${{ secrets.DATABASE_USER }}
           envkey_DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
           envkey_DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-          envkey_DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-          envkey_DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+          # NOTE: Since I am using a database from Oracle Cloud,
+          # and since they require it to be empty, I am passing
+          # empty environment variables here. I was unable to set
+          # completely empty GitHub Actions secrets.
+          envkey_DATABASE_HOST: "" # ${{ secrets.DATABASE_HOST }}
+          envkey_DATABASE_PORT: "" # ${{ secrets.DATABASE_PORT }}
           envkey_DATABASE_ENGINE: ${{ secrets.DATABASE_ENGINE }}
           envkey_LAST_FM_API_KEY: ${{ secrets.LAST_FM_API_KEY }}
           envkey_LAST_FM_USER_AGENT: ${{ secrets.LAST_FM_USER_AGENT }}

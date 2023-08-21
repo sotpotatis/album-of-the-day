@@ -50,7 +50,9 @@ If you're using the production docker containers in production, also see [this](
 * Set `DATABASE_NAME` to the `DSN` (connection string, the *syntax* looks like this: `(description= (retry_count=20)()...`
 * Set `DATABASE_HOST` *and* `DATABASE_PORT` to an *empty* string (important step!)
 
-
+> **Warning** 
+> Not using Oracle Cloud? You need to do a small modification to the GitHub Action if you want to use it for deployment,
+> to include your database host and database port. Please see the [Okteto Deployment GitHub Action](https://github.com/sotpotatis/album-of-the-day/blob/1bfa645fc88b0158dbd5351b616d3bc281509d06/.github/workflows/deploy-to-okteto.yaml#L53).
 _____
 3. Install the requirements - `cd album_of_the_day_backend && poetry install`
 4. You should now be able to run the server!

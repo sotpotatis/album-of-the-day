@@ -7,7 +7,9 @@ file contents Base64-encoded (using the base64 Linux CLI as a baseline).
 Note that environment variables will not be expanded to files if the target file
 already exists.
 Also note that this script does pretty much the same as the expand-environment-files.sh script in the
-github_actions_scripts folder."""
+github_actions_scripts folder.
+This script is run by a Dockerfile and should be run with the working directory being the same as the location
+of this file (os.dirname(__file__))."""
 import base64
 import os, logging
 
