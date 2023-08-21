@@ -16,11 +16,11 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 FILES_TO_EXPAND = [  # Format: (<file name>, <environment variable name>)
-    ("album_of_the_day_backend/.wallet/cwallet.sso", "ORACLE_WALLET_FILE_CONTENTS"),
-    ("album_of_the_day_backend/.wallet/sqlnet.ora", "ORACLE_SQLNET_FILE_CONTENTS"),
-    ("album_of_the_day_backend/.wallet/tnsnames.ora", "ORACLE_TNSNAMES_FILE_CONTENTS"),
+    (".wallet/cwallet.sso", "ORACLE_WALLET_FILE_CONTENTS"),
+    (".wallet/sqlnet.ora", "ORACLE_SQLNET_FILE_CONTENTS"),
+    (".wallet/tnsnames.ora", "ORACLE_TNSNAMES_FILE_CONTENTS"),
     (
-        "album_of_the_day_backend/website/tasks/systemd/task_runner/config.toml",
+        "website/tasks/systemd/task_runner/config.toml",
         "TASK_RUNNER_CONFIG_FILE_CONTENTS",
     ),
 ]
