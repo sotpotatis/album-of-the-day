@@ -23,7 +23,11 @@ LOGGING_LEVELS = {
 logging.basicConfig(
     level=LOGGING_LEVELS[os.environ.get("LOGGING_LEVEL", "info").lower()]
 )
-
+# Print all environment variables
+logger.debug("Environment variables:")
+for environment_variable_name, environment_variable_value in os.environ.items():
+    logger.debug(f"{environment_variable_name}:{environment_variable_value}'")
+logger.debug("(end of environment variables)")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
