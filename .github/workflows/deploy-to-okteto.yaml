@@ -50,7 +50,7 @@ jobs:
           envkey_ORACLE_SQLNET_FILE_CONTENTS: ${{ secrets.ORACLE_SQLNET_FILE_CONTENTS }}
           envkey_ORACLE_TNSNAMES_FILE_CONTENTS: ${{ secrets.ORACLE_TNSNAMES_FILE_CONTENTS }}
           envkey_TASK_RUNNER_CONFIG_FILE_CONTENTS: ${{ secrets.TASK_RUNNER_CONFIG_FILE_CONTENTS }}
-          envkey_LOGGING_LEVEL: ${{ env.LOGGING_LEVEL }}
+          envkey_LOGGING_LEVEL: ${{ vars.LOGGING_LEVEL }}
           directory: website/backend/album_of_the_day_backend
           file_name: backend.env
       - name: Deploy on Okteto
