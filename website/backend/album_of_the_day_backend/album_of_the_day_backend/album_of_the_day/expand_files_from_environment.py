@@ -28,28 +28,31 @@ FILES_TO_EXPAND = [  # Format: (<file name>, <environment variable name>)
 
 def expand_files() -> None:
     """Expands files from environment variables with Base64-encoded data of the file, if they are set."""
-    for file_to_expand, environment_variable_to_use in FILES_TO_EXPAND:
-        if os.path.exists(file_to_expand):
-            logger.info(
-                f"Not expanding {file_to_expand}: already exists on target filesystem."
-            )
-        else:
-            if os.environ.get(environment_variable_to_use, None) is not None:
+    if bool(
+        os.environ.get("EXPAND_FILES_FROM_ENVIRONMENT", True)
+    ):  # Can be used to control behaviour
+        for file_to_expand, environment_variable_to_use in FILES_TO_EXPAND:
+            if os.path.exists(file_to_expand):
                 logger.info(
-                    f"Expanding Base64 encoded environment variable {environment_variable_to_use}..."
+                    f"Not expanding {file_to_expand}: already exists on target filesystem."
                 )
-                os.makedirs(
-                    os.path.dirname(file_to_expand), exist_ok=True
-                )  # Create any directories of needed
-                with open(file_to_expand, "wb") as new_file:
-                    new_file.write(
-                        base64.b64decode(os.environ[environment_variable_to_use])
-                    )
-                logger.info("File expanded.")
             else:
-                raise FileNotFoundError(
-                    f"Missing file {file_to_expand} in file system, and no corresponding environment variable is defined for it!"
-                )
+                if os.environ.get(environment_variable_to_use, None) is not None:
+                    logger.info(
+                        f"Expanding Base64 encoded environment variable {environment_variable_to_use}..."
+                    )
+                    os.makedirs(
+                        os.path.dirname(file_to_expand), exist_ok=True
+                    )  # Create any directories of needed
+                    with open(file_to_expand, "wb") as new_file:
+                        new_file.write(
+                            base64.b64decode(os.environ[environment_variable_to_use])
+                        )
+                    logger.info("File expanded.")
+                else:
+                    raise FileNotFoundError(
+                        f"Missing file {file_to_expand} in file system, and no corresponding environment variable is defined for it!"
+                    )
 
 
 if __name__ == "__main__":
