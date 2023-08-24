@@ -61,9 +61,6 @@ jobs:
         run: |
           cd website
           ls
-          set -o allexport
-          source ./backend/album_of_the_day_backend/backend.env set
-          +o allexport
           curl https://get.okteto.com -sSfL | sh
           okteto context use https://cloud.okteto.com --token ${{ secrets.OKTETO_TOKEN }}
           okteto deploy --build
