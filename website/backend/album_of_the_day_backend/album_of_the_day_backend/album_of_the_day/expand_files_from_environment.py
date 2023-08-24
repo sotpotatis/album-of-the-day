@@ -10,13 +10,13 @@ Also note that this script does pretty much the same as the expand-environment-f
 github_actions_scripts folder.
 This script is run by a Dockerfile and should be run with the working directory being the same as the location
 of this file (os.dirname(__file__))."""
-import base64
-import os, logging
+import os, logging, base64, dotenv
 
 # Set up logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
-
+# Load dotenv file
+dotenv.load_dotenv(dotenv_path="../backend.env", verbose=True)
 FILES_TO_EXPAND = [  # Format: (<file name>, <environment variable name>)
     (".wallet/cwallet.sso", "ORACLE_WALLET_FILE_CONTENTS"),
     (".wallet/sqlnet.ora", "ORACLE_SQLNET_FILE_CONTENTS"),
