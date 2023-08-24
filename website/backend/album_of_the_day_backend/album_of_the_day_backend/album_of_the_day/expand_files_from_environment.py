@@ -39,25 +39,25 @@ def expand_files() -> None:
                     f"Not expanding {file_to_expand}: already exists on target filesystem."
                 )
             else:
-                if os.environ.get(environment_variable_to_use, None) is not None:
+                variable_value = os.environ.get(environment_variable_to_use, None)
+                if variable_value is not None:
                     logger.info(
                         f"Expanding Base64 encoded environment variable {environment_variable_to_use}..."
                     )
+                    logger.info(f"(variable length: {len(variable_value)}")
                     parent_directory = os.path.dirname(file_to_expand)
                     if not os.path.exists(parent_directory):
                         logger.info(f"Creating directory {parent_directory}...")
-                        os.mkdir(parent_directory)
+                        os.makedirs(parent_directory)
                         logger.info(f"Directory {parent_directory} created.")
-                    with open(file_to_expand, "wb+") as new_file:
-                        new_file.write(
-                            base64.b64decode(os.environ[environment_variable_to_use])
-                        )
+                    with open(file_to_expand, "wb") as new_file:
+                        new_file.write(base64.b64decode(variable_value))
                         new_file.flush()
                         new_file.seek(0)
-                        if len(new_file.read()) == 0:
-                            error_message = f"New contents of {file_to_expand} is 0. Please check your environment variables!"
-                            logger.critical(error_message)
-                            raise ValueError(error_message)
+                    if len(open(file_to_expand, "r").read()) == 0:
+                        error_message = f"New contents of {file_to_expand} is 0. Please check your environment variables!"
+                        logger.critical(error_message)
+                        raise ValueError(error_message)
                     logger.info("File expanded.")
                 else:
                     raise FileNotFoundError(
