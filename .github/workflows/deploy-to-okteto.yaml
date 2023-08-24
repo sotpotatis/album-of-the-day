@@ -60,9 +60,10 @@ jobs:
       - name: Deploy on Okteto
         run: |
           cd website
-          wget https://github.com/ko1nksm/shdotenv/releases/latest/download/shdotenv
-          chmod +x shdotenv
-          ./shdotenv -e ./backend/album_of_the_day_backend/backend.env
+          ls
+          set -o allexport
+          source ./backend/album_of_the_day_backend/backend.env set
+          +o allexport
           curl https://get.okteto.com -sSfL | sh
           okteto context use https://cloud.okteto.com --token ${{ secrets.OKTETO_TOKEN }}
           okteto deploy --build
