@@ -28,15 +28,16 @@ ARG TASK_RUNNER_CONFIG_FILE_CONTENTS
 ARG LOGGING_LEVEL
 WORKDIR /app
 COPY ./album_of_the_day_backend .
+# Install dependencies
+ #(coreutils is for Base64), python3-devel and postgresql is for psycopg2
+RUN yum install python39 curl wget unzip coreutils postgresql python3-devel -y
+# Work with the environment variables
 RUN python debug_environment.py
 # Test for empty variables (files are not supposed to be empty)
 RUN test -n "$ORACLE_WALLET_FILE_CONTENTS"
 RUN test -n "$ORACLE_SQLNET_FILE_CONTENTS"
 RUN test -n "$ORACLE_TNSNAMES_FILE_CONTENTS"
 RUN test -n "$TASK_RUNNER_CONFIG_FILE_CONTENTS"
-# Install dependencies
- #(coreutils is for Base64), python3-devel and postgresql is for psycopg2
-RUN yum install python39 curl wget unzip coreutils postgresql python3-devel -y
 WORKDIR album_of_the_day_backend
 # Download Archivo Black
 RUN wget https://www.1001fonts.com/download/archivo-black.zip
