@@ -14,9 +14,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - name: Debug some stuff
-        run: |
-          test -n "${{ secrets.ORACLE_TNSNAMES_FILE_CONTENTS }}"
       # Note: this has been moved to the Dockerfile
       #- name: ➡️ Prepare backend environment
         #run: chmod +x github_actions_scripts/prepare-backend-environment.sh &&
@@ -56,6 +53,9 @@ jobs:
           envkey_LOGGING_LEVEL: ${{ vars.LOGGING_LEVEL }}
           directory: website/backend/album_of_the_day_backend
           file_name: backend.env
+      - name: Debug environment file
+        run: |
+          cat website/backend/album_of_the_day_backend/backend.env
       - name: Deploy on Okteto
         run: |
           cd website
