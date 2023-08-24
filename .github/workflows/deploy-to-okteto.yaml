@@ -63,5 +63,5 @@ jobs:
           ls
           curl https://get.okteto.com -sSfL | sh
           okteto context use https://cloud.okteto.com --token ${{ secrets.OKTETO_TOKEN }}
-          okteto build --log-level --no-cache debug
+          okteto build --log-level debug --no-cache
           okteto deploy --log-level debug
