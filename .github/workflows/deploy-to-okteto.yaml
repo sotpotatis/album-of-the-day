@@ -7,7 +7,6 @@ on:
 jobs:
   deploy-to-okteto:
     runs-on: ubuntu-latest
-    secrets: inherit
     steps:
       - name: 👀 Checkout code
         uses: actions/checkout@master
