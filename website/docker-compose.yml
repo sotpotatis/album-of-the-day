@@ -48,6 +48,8 @@ services:
         TASK_RUNNER_CONFIG_FILE_CONTENTS: ${TASK_RUNNER_CONFIG_FILE_CONTENTS}
         LOGGING_LEVEL: ${LOGGING_LEVEL}
         TEST: "test"
+    environment:
+      TEST: "test"
     ports:
       - "80:8080"
     labels:
