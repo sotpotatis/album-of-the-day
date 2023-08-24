@@ -18,7 +18,7 @@ services:
   #middleware to handle static sites.
   backend:
     env_file:
-      - ./backend/album_of_the_day_backend/backend.env
+      - ./album_of_the_day_backend/backend.env
     environment:
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
       DATABASE_USER: ${DATABASE_USER}
