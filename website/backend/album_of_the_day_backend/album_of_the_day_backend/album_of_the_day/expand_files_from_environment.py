@@ -52,6 +52,8 @@ def expand_files() -> None:
                         new_file.write(
                             base64.b64decode(os.environ[environment_variable_to_use])
                         )
+                        new_file.flush()
+                        new_file.seek(0)
                         if len(new_file.read()) == 0:
                             error_message = f"New contents of {file_to_expand} is 0. Please check your environment variables!"
                             logger.critical(error_message)
