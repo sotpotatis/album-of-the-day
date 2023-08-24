@@ -32,7 +32,7 @@ COPY ./album_of_the_day_backend .
  #(coreutils is for Base64), python3-devel and postgresql is for psycopg2
 RUN yum install python39 curl wget unzip coreutils postgresql python3-devel -y
 # Work with the environment variables
-RUN python debug_environment.py
+RUN python3.9 debug_environment.py
 # Test for empty variables (files are not supposed to be empty)
 RUN test -n "$ORACLE_WALLET_FILE_CONTENTS"
 RUN test -n "$ORACLE_SQLNET_FILE_CONTENTS"
