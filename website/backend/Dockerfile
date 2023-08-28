@@ -25,8 +25,7 @@ ARG ORACLE_WALLET_FILE_CONTENTS
 ARG ORACLE_SQLNET_FILE_CONTENTS
 ARG ORACLE_TNSNAMES_FILE_CONTENTS
 ARG TASK_RUNNER_CONFIG_FILE_CONTENTS
-RUN echo "$TEST"
-RUN test -n "$TEST"
+ARG TEST
 ARG LOGGING_LEVEL=$LOGGING_LEVEL
 ENV DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
 ENV DATABASE_USER=$DATABASE_USER
@@ -52,10 +51,12 @@ ENV ORACLE_SQLNET_FILE_CONTENTS=$ORACLE_SQLNET_FILE_CONTENTS
 ENV ORACLE_TNSNAMES_FILE_CONTENTS=$ORACLE_TNSNAMES_FILE_CONTENTS
 ENV TASK_RUNNER_CONFIG_FILE_CONTENTS=$TASK_RUNNER_CONFIG_FILE_CONTENTS
 ENV LOGGING_LEVEL=$LOGGING_LEVEL
+ENV TEST=$TEST
 WORKDIR /app
 COPY ./album_of_the_day_backend .
+RUN cat ./backend.env || exit 1 # Validate environment variable file
 # Install dependencies
- #(coreutils is for Base64), python3-devel and postgresql is for psycopg2
+# (coreutils is for Base64), python3-devel and postgresql is for psycopg2
 RUN yum install python39 curl wget unzip coreutils postgresql python3-devel -y
 # Work with the environment variables
 RUN python3.9 debug_environment.py

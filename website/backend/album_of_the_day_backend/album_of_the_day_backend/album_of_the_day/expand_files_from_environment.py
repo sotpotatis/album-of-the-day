@@ -16,7 +16,7 @@ import os, logging, base64, dotenv
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 # Load dotenv file
-dotenv.load_dotenv(dotenv_path="../backend.env", verbose=True)
+dotenv.load_dotenv(dotenv_path="../../backend.env", verbose=True)
 FILES_TO_EXPAND = [  # Format: (<file name>, <environment variable name>)
     (".wallet/cwallet.sso", "ORACLE_WALLET_FILE_CONTENTS"),
     (".wallet/sqlnet.ora", "ORACLE_SQLNET_FILE_CONTENTS"),
