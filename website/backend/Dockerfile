@@ -72,8 +72,8 @@ ENV PATH="/root/.local/bin:$PATH"
 # Install dependencies using Poetry
 RUN poetry install
 # Work with the environment variables
-RUN poetry run python debug_environment.py
-RUN poetry python load_dotenv.py "./backend.env"
+RUN poetry run python3.9 debug_environment.py
+RUN poetry python3.9 load_dotenv.py "./backend.env"
 # Test for empty variables (files are not supposed to be empty)
 RUN test -n "$ORACLE_WALLET_FILE_CONTENTS"
 RUN test -n "$ORACLE_SQLNET_FILE_CONTENTS"
@@ -81,7 +81,7 @@ RUN test -n "$ORACLE_TNSNAMES_FILE_CONTENTS"
 RUN test -n "$TASK_RUNNER_CONFIG_FILE_CONTENTS"
 WORKDIR album_of_the_day_backend
 # Decode environment variables from Base64
-RUN poetry run python ./album_of_the_day/expand_files_from_environment.py
+RUN poetry run python3.9 ./album_of_the_day/expand_files_from_environment.py
 WORKDIR /app
 # And now just run the server
 EXPOSE 8080
