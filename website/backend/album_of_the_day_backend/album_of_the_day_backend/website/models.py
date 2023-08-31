@@ -331,7 +331,7 @@ def wait_until_artists(instance: Album, timeout: Optional[int] = None) -> None:
     if instance.artists.first() is None:
         time_elapsed = 0
         # Run until timeout or until we have artists
-        while time_elapsed < timeout or instance.artists.first() is None:
+        while time_elapsed < timeout and instance.artists.first() is None:
             # Print out debugging every 2 seconds
             if time_elapsed % 2 == 0:
                 logger.info(

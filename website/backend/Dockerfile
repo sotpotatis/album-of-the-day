@@ -60,6 +60,7 @@ RUN cat ./backend.env || exit 1 # Validate environment variable file
 RUN yum install python39 curl wget unzip coreutils postgresql python3-devel -y
 # Work with the environment variables
 RUN python3.9 debug_environment.py
+RUN python3.9 load_dotenv.py "./backend.env"
 # Test for empty variables (files are not supposed to be empty)
 RUN test -n "$ORACLE_WALLET_FILE_CONTENTS"
 RUN test -n "$ORACLE_SQLNET_FILE_CONTENTS"
@@ -81,6 +82,7 @@ RUN poetry install
 WORKDIR album_of_the_day_backend
 # Decode environment variables from Base64
 RUN poetry run python ./album_of_the_day/expand_files_from_environment.py
+WORKDIR /app
 # And now just run the server
 EXPOSE 8080
-ENTRYPOINT ["poetry", "run", "uvicorn", "album_of_the_day.asgi:application", "--host=0.0.0.0", "--port=8080"]
+ENTRYPOINT ["poetry", "run", "uvicorn", "album_of_the_day.album_of_the_day.asgi:application", "--host=0.0.0.0", "--port=8080"]
