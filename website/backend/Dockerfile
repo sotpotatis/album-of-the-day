@@ -58,20 +58,12 @@ RUN cat ./backend.env || exit 1 # Validate environment variable file
 # Install dependencies
 # (coreutils is for Base64), python3-devel and postgresql is for psycopg2
 RUN yum install python39 curl wget unzip coreutils postgresql python3-devel -y
-# Work with the environment variables
-RUN python3.9 debug_environment.py
-RUN python3.9 load_dotenv.py "./backend.env"
-# Test for empty variables (files are not supposed to be empty)
-RUN test -n "$ORACLE_WALLET_FILE_CONTENTS"
-RUN test -n "$ORACLE_SQLNET_FILE_CONTENTS"
-RUN test -n "$ORACLE_TNSNAMES_FILE_CONTENTS"
-RUN test -n "$TASK_RUNNER_CONFIG_FILE_CONTENTS"
 WORKDIR album_of_the_day_backend
-# Download Archivo Black
-RUN wget https://www.1001fonts.com/download/archivo-black.zip
-RUN unzip archivo-black.zip
+# Download Archivo Black - not needed anymore as it is handled by the code
+# RUN wget https://www.1001fonts.com/download/archivo-black.zip
+# RUN unzip archivo-black.zip
 # Set environment variable to where the font was downloaded
-ENV ALBUM_IMAGES_FONT_PATH=$(pwd)/archivo-black/ArchivoBlack-Regular.zip
+# ENV ALBUM_IMAGES_FONT_PATH=$(pwd)/archivo-black/ArchivoBlack-Regular.zip
 WORKDIR /app
 # Install Poetry and dependencies
 RUN curl -sSL https://install.python-poetry.org | python3.9 -
@@ -79,6 +71,14 @@ RUN curl -sSL https://install.python-poetry.org | python3.9 -
 ENV PATH="/root/.local/bin:$PATH"
 # Install dependencies using Poetry
 RUN poetry install
+# Work with the environment variables
+RUN poetry run python debug_environment.py
+RUN poetry python load_dotenv.py "./backend.env"
+# Test for empty variables (files are not supposed to be empty)
+RUN test -n "$ORACLE_WALLET_FILE_CONTENTS"
+RUN test -n "$ORACLE_SQLNET_FILE_CONTENTS"
+RUN test -n "$ORACLE_TNSNAMES_FILE_CONTENTS"
+RUN test -n "$TASK_RUNNER_CONFIG_FILE_CONTENTS"
 WORKDIR album_of_the_day_backend
 # Decode environment variables from Base64
 RUN poetry run python ./album_of_the_day/expand_files_from_environment.py
