@@ -9,51 +9,25 @@ services:
       - "80:3000"
     labels:
       #Used for adding a custom domain to Okteto, per their documentation: https://www.okteto.com/docs/1.7/cloud/custom-domains/
+      #Note: custom domains only work in a self-deployed environment, not on Okteto Cloud!
       #dev.okteto.com/auto-ingress: domain
-       #dev.okteto.com/custom-domain: true
-       #dev.okteto.com/domain: album-of-the-day.albins.website
-       #dev.okteto.com/auto-ingress: "true"
-       dev.okteto.com/generate-host: "true"
+      #dev.okteto.com/custom-domain: true
+      #dev.okteto.com/domain: album-of-the-day.albins.website
+      #dev.okteto.com/auto-ingress: "true"
+      dev.okteto.com/generate-host: "true"
   #The backend runs using uvicorn and Django, with Whitenoise as the
   #middleware to handle static sites.
   backend:
     env_file:
       - ./backend/album_of_the_day_backend/backend.env
-    environment:
-      TEST: "test"
     build:
       context: ./backend
       dockerfile: Dockerfile
-      args:
-        DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
-        DATABASE_USER: ${DATABASE_USER}
-        DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-        DATABASE_NAME: ${DATABASE_NAME}
-        DATABASE_HOST: ${DATABASE_HOST}
-        DATABASE_PORT: ${DATABASE_PORT}
-        DATABASE_ENGINE: ${DATABASE_ENGINE}
-        LAST_FM_API_KEY: ${LAST_FM_API_KEY}
-        LAST_FM_USER_AGENT: ${LAST_FM_USER_AGENT}
-        LAST_FM_USERNAME: ${LAST_FM_USERNAME}
-        SPOTIFY_CLIENT_ID: ${SPOTIFY_CLIENT_ID}
-        SPOTIFY_CLIENT_SECRET: ${SPOTIFY_CLIENT_SECRET}
-        SPOTIFY_USER_AGENT: ${SPOTIFY_USER_AGENT}
-        FRONTEND_BASE_URL: ${FRONTEND_BASE_URL}
-        BASE_URL: ${BASE_URL}
-        BASE_DOMAIN: ${BASE_DOMAIN}
-        ALBUM_OF_THE_DAY_BOT_TOKEN: ${ALBUM_OF_THE_DAY_BOT_TOKEN}
-        ALBUM_IMAGES_FONT_PATH: ${ALBUM_IMAGES_FONT_PATH}
-        DJANGO_CSRF_ORIGINS: ${DJANGO_CSRF_ORIGINS}
-        ORACLE_WALLET_FILE_CONTENTS: ${ORACLE_WALLET_FILE_CONTENTS}
-        ORACLE_SQLNET_FILE_CONTENTS: ${ORACLE_SQLNET_FILE_CONTENTS}
-        ORACLE_TNSNAMES_FILE_CONTENTS: ${ORACLE_TNSNAMES_FILE_CONTENTS}
-        TASK_RUNNER_CONFIG_FILE_CONTENTS: ${TASK_RUNNER_CONFIG_FILE_CONTENTS}
-        LOGGING_LEVEL: ${LOGGING_LEVEL}
-        TEST: "Test"
     ports:
       - "80:8080"
     labels:
       #Used for adding a custom domain to Okteto, per their documentation: https://www.okteto.com/docs/1.7/cloud/custom-domains/
+      #Note: custom domains only work in a self-deployed environment, not on Okteto Cloud!
       #dev.okteto.com/auto-ingress: domain
       #dev.okteto.com/custom-domain: true
       #dev.okteto.com/domain: album-of-the-day-api.albins.website

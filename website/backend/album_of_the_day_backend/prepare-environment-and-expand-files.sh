@@ -1,5 +1,6 @@
 #prepare-environment-and-expand-files.sh
 #Prepares an environment and expands files from it.
+#Note: this script is not current used in the Dockerfile.
 #Generate a script that will load the current environment into Bash
 poetry run python debug_environment.py || exit 1
 cd album_of_the_day_backend || exit 1
