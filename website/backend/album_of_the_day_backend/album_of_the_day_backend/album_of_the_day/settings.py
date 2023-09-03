@@ -55,7 +55,7 @@ if DATABASE_ENGINE == "django.db.backends.oracle":
         for wallet_subfile in os.listdir(ORACLE_DATABASE_CONFIG_DIR):
             full_subfile_path = os.path.join(ORACLE_DATABASE_CONFIG_DIR, wallet_subfile)
             logger.debug(
-                f"Contents of {full_subfile_path}: {open(full_subfile_path, 'r').read()}"
+                f"Contents of {full_subfile_path}: {open(full_subfile_path, 'rb').read()}"
             )
     # If using the Oracle Cloud database, you can set an ORACLE_DATABASE_CLIENT_PATH variable
     # to specify where you have installed the library, if you don't want to add it to

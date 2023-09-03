@@ -50,7 +50,6 @@ def expand_files() -> None:
                     logger.info(f"(variable length: {len(variable_value)})")
                     logger.info(f"(variable content: {variable_value})")
                     variable_decoded = base64.b64decode(variable_value)
-                    logger.info(f"(variable decoded: {variable_decoded[3:]}...")
                     parent_directory = os.path.dirname(file_to_expand)
                     if not os.path.exists(parent_directory):
                         logger.info(f"Creating directory {parent_directory}...")
