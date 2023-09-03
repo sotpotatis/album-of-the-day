@@ -60,7 +60,7 @@ def expand_files() -> None:
                         new_file.write(variable_decoded)
                         new_file.flush()
                         new_file.seek(0)
-                    if len(open(file_to_expand, "r").read()) == 0:
+                    if len(open(file_to_expand, "rb").read()) == 0:
                         error_message = f"New contents of {file_to_expand} is 0. Please check your environment variables!"
                         logger.critical(error_message)
                         raise ValueError(error_message)
