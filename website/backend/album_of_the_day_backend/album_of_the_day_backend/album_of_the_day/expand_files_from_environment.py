@@ -19,6 +19,7 @@ if "album_of_the_day_backend" in os.listdir(os.getcwd()):
     os.chdir(
         os.path.join(os.getcwd(), "album_of_the_day_backend")
     )  # cd into correct directory
+dotenv.load_dotenv("../backend.env", verbose=True)  # Load environment variables
 FILES_TO_EXPAND = [  # Format: (<file name>, <environment variable name>)
     (".wallet/cwallet.sso", "ORACLE_WALLET_FILE_CONTENTS"),
     (".wallet/sqlnet.ora", "ORACLE_SQLNET_FILE_CONTENTS"),
