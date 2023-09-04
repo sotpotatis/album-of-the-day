@@ -23,6 +23,8 @@ RUN poetry install
 # Work with the environment variables
 WORKDIR album_of_the_day_backend
 RUN poetry run python album_of_the_day/expand_files_from_environment.py
+# Collect static files
+RUN poetry run python manage.py collectstatic
 # And now just run the server
 EXPOSE 8080
 ENTRYPOINT ["poetry", "run", "uvicorn", "album_of_the_day.asgi:application", "--host=0.0.0.0", "--port=8080"]
