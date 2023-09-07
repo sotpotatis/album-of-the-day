@@ -18,8 +18,11 @@ from django.urls import include, path
 import rest_framework.urls, rest_framework.authtoken.views, rest_framework.routers
 from rest_framework.schemas import get_schema_view
 from website.views import *
+import dotenv
 
 API_VERSION = "1.0.0"  # Constant, the API version.
+# Import .env variables if possibly defined (also see asgi.py)
+dotenv.load_dotenv("./../.backend.env", verbose=True)
 # Run tasks
 from .startup import run_startup_tasks
 
