@@ -15,5 +15,5 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "album_of_the_day.settings")
 # Load environment variables from backend.env in the working directory.
 # Note: you can leave out this file, but it will most likely be defined because it is
 # used in the Dockerfile.
-dotenv.load_dotenv("./../.backend.env", verbose=True)
+dotenv.load_dotenv("./../backend.env", verbose=True)
 application = get_asgi_application()

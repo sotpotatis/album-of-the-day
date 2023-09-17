@@ -10,9 +10,7 @@ def main():
     """Run administrative tasks."""
     os.environ["DJANGO_SETTINGS_MODULE"] = "album_of_the_day.settings"
     # Load environment variables
-    DOTENV_FILE_PATH = "./../.backend.env"
-    print(os.listdir(os.getcwd()))
-    print(os.listdir("./../"))
+    DOTENV_FILE_PATH = "./../backend.env"
     dotenv.load_dotenv(DOTENV_FILE_PATH, verbose=True)
     print(f".env file exists: {dotenv.find_dotenv(DOTENV_FILE_PATH) != ''}")
     try:

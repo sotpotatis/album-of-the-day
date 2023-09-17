@@ -26,7 +26,7 @@ API_VERSION = "1.0.0"  # Constant, the API version.
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 # Import .env variables if possibly defined (also see asgi.py)
-BACKEND_ENV_FILE = "./../.backend.env"
+BACKEND_ENV_FILE = "./../backend.env"
 dotenv.load_dotenv(BACKEND_ENV_FILE, verbose=True)
 # Some prints since verbose=True above doesn't always seem to give the verbosity that I want
 # (I might be wrong though)
