@@ -13,6 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import logging
+
 from django.contrib import admin
 from django.urls import include, path
 import rest_framework.urls, rest_framework.authtoken.views, rest_framework.routers
@@ -21,8 +23,17 @@ from website.views import *
 import dotenv
 
 API_VERSION = "1.0.0"  # Constant, the API version.
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 # Import .env variables if possibly defined (also see asgi.py)
-dotenv.load_dotenv("./../.backend.env", verbose=True)
+BACKEND_ENV_FILE = "./../.backend.env"
+dotenv.load_dotenv(BACKEND_ENV_FILE, verbose=True)
+# Some prints since verbose=True above doesn't always seem to give the verbosity that I want
+# (I might be wrong though)
+if dotenv.find_dotenv(BACKEND_ENV_FILE):
+    logger.info("Backend environment file loaded.")
+else:
+    logger.warning(f"Could not find environment file {BACKEND_ENV_FILE}!")
 # Run tasks
 from .startup import run_startup_tasks
 

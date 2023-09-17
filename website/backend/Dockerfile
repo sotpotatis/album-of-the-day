@@ -24,7 +24,9 @@ RUN poetry install
 WORKDIR album_of_the_day_backend
 RUN poetry run python album_of_the_day/expand_files_from_environment.py
 # Collect static files
-RUN poetry run python manage.py collectstatic
+# (--no-input will replace the "Are you sure you want to replace static files?" prompt.)
+# (we are sure since these files are no user-generated files)
+RUN poetry run python manage.py collectstatic --no-input
 # And now just run the server
 EXPOSE 8080
 ENTRYPOINT ["poetry", "run", "uvicorn", "album_of_the_day.asgi:application", "--host=0.0.0.0", "--port=8080"]

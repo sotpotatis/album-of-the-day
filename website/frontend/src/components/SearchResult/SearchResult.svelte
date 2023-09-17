@@ -150,7 +150,7 @@ using provided filters and then display it inside a heading with a little count 
 			/>
 		</svelte:fragment>
 		<svelte:fragment slot="collapsible">
-			{#if success !== false && !skeleton}
+			{#if success !== false}
 				<div
 					class={`${
 						!inline
@@ -174,13 +174,14 @@ using provided filters and then display it inside a heading with a little count 
 							<ListCard data={itemData} {skeleton} />
 						{:else if searchType === 'genres'}
 							<GenreTag
+								{skeleton}
 								name={itemData.name}
 								id={itemData.id}
 								color={itemData.color}
 								size="medium"
 							/>
 						{:else if searchType === 'artists'}
-							<ArtistTag artistId={itemData.id} artistName={itemData.name} />
+							<ArtistTag {skeleton} artistId={itemData.id} artistName={itemData.name} />
 						{/if}
 					{/each}
 				</div>

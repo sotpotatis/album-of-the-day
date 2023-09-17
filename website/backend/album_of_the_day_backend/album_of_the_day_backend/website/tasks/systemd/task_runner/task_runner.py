@@ -71,16 +71,16 @@ def run(task_name: str):
     if REPORT_STATUS:
         logger.info("Reporting task start...")
         health_engine.send_status(task_name=TASK_NAME, task_state=TASK_STATE.STARTING)
-    # Add website directory to path
-    environment = os.environ.copy()
-    if "PYTHONPATH" not in environment:
-        environment["PYTHONPATH"] = ""
-    environment["PYTHONPATH"] += WEBSITE_DIRECTORY
+    if "PYTHONPATH" not in os.environ:
+        os.environ["PYTHONPATH"] = ""
+    os.environ["PYTHONPATH"] += WEBSITE_DIRECTORY
     if not bool(os.environ.get("DJANGO_SETTINGS_MODULE_ALREADY_SET", False)):
-        environment["DJANGO_SETTINGS_MODULE"] = "album_of_the_day.settings"
-        environment.setdefault("DJANGO_SETTINGS_MODULE", "album_of_the_day.settings")
+        os.environ["DJANGO_SETTINGS_MODULE"] = "album_of_the_day.settings"
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "album_of_the_day.settings")
     else:
         logger.info("Settings provided by user.")
+    # Add website directory to path
+    environment = os.environ.copy()
     logger.info("Setting up Django environment...")
     logger.info(f"(Django settings module: {environment['DJANGO_SETTINGS_MODULE']})")
     # Set up Django environment

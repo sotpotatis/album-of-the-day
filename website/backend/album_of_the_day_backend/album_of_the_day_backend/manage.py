@@ -3,10 +3,14 @@
 import os
 import sys
 
+import dotenv
+
 
 def main():
     """Run administrative tasks."""
     os.environ["DJANGO_SETTINGS_MODULE"] = "album_of_the_day.settings"
+    # Load environment variables
+    dotenv.load_dotenv("./../.backend.env", verbose=True)
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

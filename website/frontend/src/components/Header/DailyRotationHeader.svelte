@@ -23,7 +23,7 @@ A header showing information about a daily rotation.
 		{!skeleton ? dailyRotationDate.toISODate() : '20XX-XX-XX'}
 	</h1>
 	<!-- Add genre tags for each genre -->
-	<div id="genre-tags" class="grid grid-cols-3 gap-x-8">
+	<div id="genre-tags" class="grid grid-cols-3 gap-x-8 gap-y-8">
 		{#each genresAreCollapsed ? firstThreeGenres : dailyRotationGenres as genre}
 			<GenreTag name={genre.name} id={genre.name} color={genre.color} {skeleton} size="small" />
 		{/each}
@@ -32,7 +32,8 @@ A header showing information about a daily rotation.
 	{#if numberOfAdditionalGenres > 0}
 		{#if genresAreCollapsed}
 			<p class={`text-xl font-bold${skeleton ? ' bg-white m-3' : ''}`}>
-				+{numberOfAdditionalGenres !== 1 ? 'genrer' : 'genre'}>
+				+{numberOfAdditionalGenres}
+				{numberOfAdditionalGenres !== 1 ? 'genrer' : 'genre'}
 			</p>
 		{/if}
 		<button

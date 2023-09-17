@@ -104,8 +104,13 @@ def update_daily_rotations():
                 if do_check:
                     # Now, compare the tracklist!
                     album_tracks = album_data.album.tracks.track
+                    number_of_album_tracks = len(album_tracks)
+                    number_of_scrobbled_tracks = len(album_buffer)
                     # Allow a 1 track discrepancy
-                    if len(album_tracks) <= len(album_buffer) - 1:
+                    logger.info(
+                        f"{number_of_scrobbled_tracks} scrobbled tracks on album, {number_of_album_tracks} tracks on album."
+                    )
+                    if number_of_album_tracks - 1 <= number_of_scrobbled_tracks:
                         logger.info(
                             f"Detected an album scrobble for album {album_name}. Adding..."
                         )

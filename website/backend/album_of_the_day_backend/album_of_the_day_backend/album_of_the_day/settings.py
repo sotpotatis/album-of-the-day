@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os, cx_Oracle, logging, dotenv
 from pathlib import Path
 
-# Import environment variables if defined
-dotenv.load_dotenv("./../.backend.env", verbose=True)
 # Set up logging
 logger = logging.getLogger(__name__)
 LOGGING_LEVELS = {
