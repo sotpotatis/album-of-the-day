@@ -11,8 +11,10 @@ def main():
     os.environ["DJANGO_SETTINGS_MODULE"] = "album_of_the_day.settings"
     # Load environment variables
     DOTENV_FILE_PATH = "./../.backend.env"
+    print(os.listdir(os.getcwd()))
+    print(os.listdir("./../"))
     dotenv.load_dotenv(DOTENV_FILE_PATH, verbose=True)
-    print(f".env file exists: {dotenv.find_dotenv(DOTENV_FILE_PATH)}")
+    print(f".env file exists: {dotenv.find_dotenv(DOTENV_FILE_PATH) != ''}")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
